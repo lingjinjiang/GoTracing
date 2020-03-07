@@ -35,7 +35,7 @@ func Tracing(objList list.List, ray geo.Ray) (bool, *obj.Object, *geo.Point3D) {
 	}
 }
 
-func GetColor(isHit bool, hitObject obj.Object, hitPoint geo.Point3D, ray geo.Ray) color.RGBA {
+func GetColor(isHit bool, hitObject obj.Object, hitPoint geo.Point3D, ray geo.Ray, objList list.List) color.RGBA {
 	if isHit {
 		vOut := ray.Direction.Opposite()
 
@@ -43,10 +43,19 @@ func GetColor(isHit bool, hitObject obj.Object, hitPoint geo.Point3D, ray geo.Ra
 		vIn := geo.Vector3D{
 			X: 1,
 			Y: 1,
-			Z: 1,
+			Z: 2,
 		}.Normalize()
 
-		return hitObject.GetMaterial().Shade(vIn, vOut, hitObject.NormalVector(hitPoint), hitPoint)
+		lcoalRay := geo.Ray{
+			Endpoint:  hitPoint,
+			Direction: vIn,
+		}
+
+		// simple shadow, if the ray from object hit point to light hit some other objects, then the point is in shadow
+		var notHitLight bool = false
+		notHitLight, _, _ = Tracing(objList, lcoalRay)
+
+		return hitObject.GetMaterial().Shade(vIn, vOut, hitObject.NormalVector(hitPoint), hitPoint, !notHitLight)
 	} else {
 		return color.RGBA{20, 20, 20, 255}
 	}

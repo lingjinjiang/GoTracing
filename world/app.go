@@ -44,7 +44,7 @@ func Render(s *Scene) {
 					ray := s.ViewPoint.GetRay(lcoalX, lcoalY)
 					isHit, hitObject, hitPoint := tracer.Tracing(*s.ObjList, *ray)
 
-					localColor := tracer.GetColor(isHit, *hitObject, *hitPoint, *ray)
+					localColor := tracer.GetColor(isHit, *hitObject, *hitPoint, *ray, *s.ObjList)
 
 					r += int(localColor.R)
 					g += int(localColor.G)
