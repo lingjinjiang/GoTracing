@@ -7,6 +7,8 @@ import (
 	"image/color"
 )
 
+var BACKGOUND color.RGBA = color.RGBA{20, 20, 20, 255}
+
 func Tracing(objList list.List, ray geo.Ray) (bool, *obj.Object, *geo.Point3D) {
 	var min float64 = -1.0
 	var isHit bool = false
@@ -37,10 +39,11 @@ func Tracing(objList list.List, ray geo.Ray) (bool, *obj.Object, *geo.Point3D) {
 
 func GetColor(isHit bool, hitObject obj.Object, hitPoint geo.Point3D, ray geo.Ray, objList list.List) color.RGBA {
 	if isHit {
+		localNormal := hitObject.NormalVector(hitPoint)
 		vOut := ray.Direction.Opposite()
 
 		// temporary light direction
-		vIn := geo.Vector3D{
+		lightIn := geo.Vector3D{
 			X: 1,
 			Y: 1,
 			Z: 2,
@@ -48,15 +51,29 @@ func GetColor(isHit bool, hitObject obj.Object, hitPoint geo.Point3D, ray geo.Ra
 
 		lcoalRay := geo.Ray{
 			Endpoint:  hitPoint,
-			Direction: vIn,
+			Direction: lightIn,
 		}
 
 		// simple shadow, if the ray from object hit point to light hit some other objects, then the point is in shadow
 		var notHitLight bool = false
 		notHitLight, _, _ = Tracing(objList, lcoalRay)
 
-		return hitObject.GetMaterial().Shade(vIn, vOut, hitObject.NormalVector(hitPoint), hitPoint, !notHitLight)
+		// simple diffuse
+		diffuseIn := localNormal.Add(ray.Direction.Normalize())
+		diffuseRay := geo.Ray{
+			Endpoint:  hitPoint,
+			Direction: diffuseIn,
+		}
+		isDiffuse, diffuseObject, diffuseHitPoint := Tracing(objList, diffuseRay)
+		var diffuseColor color.RGBA
+		if isDiffuse {
+			diffuseColor = (*diffuseObject).GetMaterial().Shade(lightIn, diffuseIn, (*diffuseObject).NormalVector(*diffuseHitPoint), *diffuseHitPoint, true, BACKGOUND)
+		} else {
+			diffuseColor = BACKGOUND
+		}
+
+		return hitObject.GetMaterial().Shade(lightIn, vOut, localNormal, hitPoint, !notHitLight, diffuseColor)
 	} else {
-		return color.RGBA{20, 20, 20, 255}
+		return BACKGOUND
 	}
 }

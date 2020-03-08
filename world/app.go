@@ -105,10 +105,20 @@ func Build(s *Scene, sceneFile string) {
 	}
 	sphere4.SetMaterial(materail4)
 
+	sphere5 := obj.NewSphere(0, 40, 0, 75)
+	materail5 := brdf.SpecularPhong{
+		Ks:    0.1,
+		Kd:    0.9,
+		Cd:    0.9,
+		Color: color.RGBA{255, 255, 255, 255},
+	}
+	sphere5.SetMaterial(materail5)
+
 	s.ObjList.PushBack(sphere1)
 	s.ObjList.PushBack(sphere2)
 	s.ObjList.PushBack(sphere3)
 	s.ObjList.PushBack(sphere4)
+	s.ObjList.PushBack(sphere5)
 
 	plane1 := obj.Plane{
 		Normal: geo.Vector3D{
