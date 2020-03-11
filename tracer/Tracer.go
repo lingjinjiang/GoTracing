@@ -2,6 +2,7 @@ package tracer
 
 import (
 	geo "GoTracing/geometry"
+	"GoTracing/light"
 	obj "GoTracing/object"
 	"container/list"
 	"image/color"
@@ -37,17 +38,13 @@ func Tracing(objList list.List, ray geo.Ray) (bool, *obj.Object, *geo.Point3D) {
 	}
 }
 
-func GetColor(isHit bool, hitObject obj.Object, hitPoint geo.Point3D, ray geo.Ray, objList list.List) color.RGBA {
+func GetColor(isHit bool, hitObject obj.Object, hitPoint geo.Point3D, ray geo.Ray, objList list.List, light light.Light) color.RGBA {
 	if isHit {
 		localNormal := hitObject.NormalVector(hitPoint)
 		vOut := ray.Direction.Opposite()
 
 		// temporary light direction
-		lightIn := geo.Vector3D{
-			X: 1,
-			Y: 1,
-			Z: 2,
-		}.Normalize()
+		lightIn := light.GetDirection(hitPoint).Normalize()
 
 		lcoalRay := geo.Ray{
 			Endpoint:  hitPoint,

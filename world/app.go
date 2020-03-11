@@ -44,7 +44,7 @@ func Render(s *Scene) {
 					ray := s.ViewPoint.GetRay(lcoalX, lcoalY)
 					isHit, hitObject, hitPoint := tracer.Tracing(*s.ObjList, *ray)
 
-					localColor := tracer.GetColor(isHit, *hitObject, *hitPoint, *ray, *s.ObjList)
+					localColor := tracer.GetColor(isHit, *hitObject, *hitPoint, *ray, *s.ObjList, s.Light)
 
 					r += int(localColor.R)
 					g += int(localColor.G)
@@ -70,7 +70,7 @@ func Build(s *Scene, sceneFile string) {
 
 	// Add object to scene
 	sphere1 := obj.NewSphere(250, 40, 250, 75)
-	materail1 := brdf.Phong{
+	materail1 := brdf.SpecularPhong{
 		Ks:    0.6,
 		Kd:    0.75,
 		Cd:    0.5,
@@ -79,7 +79,7 @@ func Build(s *Scene, sceneFile string) {
 	sphere1.SetMaterial(materail1)
 
 	sphere2 := obj.NewSphere(250, 40, -250, 75)
-	materail2 := brdf.Phong{
+	materail2 := brdf.SpecularPhong{
 		Ks:    0.6,
 		Kd:    0.75,
 		Cd:    0.5,
@@ -88,7 +88,7 @@ func Build(s *Scene, sceneFile string) {
 	sphere2.SetMaterial(materail2)
 
 	sphere3 := obj.NewSphere(-250, 40, 250, 75)
-	materail3 := brdf.Phong{
+	materail3 := brdf.SpecularPhong{
 		Ks:    0.6,
 		Kd:    0.75,
 		Cd:    0.5,
@@ -97,7 +97,7 @@ func Build(s *Scene, sceneFile string) {
 	sphere3.SetMaterial(materail3)
 
 	sphere4 := obj.NewSphere(-250, 40, -250, 75)
-	materail4 := brdf.Phong{
+	materail4 := brdf.SpecularPhong{
 		Ks:    0.6,
 		Kd:    0.75,
 		Cd:    0.5,

@@ -1,17 +1,17 @@
 package world
 
 import (
-	geo "GoTracing/geometry"
+	"GoTracing/light"
 	obj "GoTracing/object"
 	"container/list"
 )
 
 type Scene struct {
 	ViewPoint Camera
-	VPlane *ViewPlane
-	Height int
-	Width int
-	Sphere *obj.Sphere
-	ObjList *list.List
-	Light *geo.Point3D
+	VPlane    *ViewPlane
+	Height    int
+	Width     int
+	Sphere    *obj.Sphere
+	ObjList   *list.List
+	Light     light.Light
 }
