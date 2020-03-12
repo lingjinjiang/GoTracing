@@ -16,7 +16,11 @@ type Phong struct {
 
 var invPi float64 = 0.3183098861837906715
 
-func (p Phong) Shade(vIn geo.Vector3D, vOut geo.Vector3D, normal geo.Vector3D, hitPoint geo.Point3D, hitLight bool, diffuseColor color.RGBA) color.RGBA {
+func (p Phong) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor color.RGBA) color.RGBA {
+	normal := shadeRec.Normal
+	vOut := shadeRec.VOut
+	vIn := shadeRec.VIn
+	hitPoint := shadeRec.HitPoint
 
 	reflect := p.lambertion()*normal.Dot(vOut) + p.ambient()*normal.Dot(vOut)
 	if hitLight {

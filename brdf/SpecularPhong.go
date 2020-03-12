@@ -14,7 +14,11 @@ type SpecularPhong struct {
 	Color color.RGBA
 }
 
-func (sp SpecularPhong) Shade(vIn geo.Vector3D, vOut geo.Vector3D, normal geo.Vector3D, hitPoint geo.Point3D, hitLight bool, diffuseColor color.RGBA) color.RGBA {
+func (sp SpecularPhong) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor color.RGBA) color.RGBA {
+	normal := shadeRec.Normal
+	vOut := shadeRec.VOut
+	vIn := shadeRec.VIn
+	hitPoint := shadeRec.HitPoint
 
 	reflect := sp.ambient() * normal.Dot(vOut)
 	if hitLight {

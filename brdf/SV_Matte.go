@@ -1,8 +1,6 @@
 package brdf
 
 import (
-	geo "GoTracing/geometry"
-
 	"image/color"
 	"math"
 )
@@ -13,7 +11,8 @@ type SV_Matte struct {
 	Size   int
 }
 
-func (sv SV_Matte) Shade(vIn geo.Vector3D, vOut geo.Vector3D, normal geo.Vector3D, hitPoint geo.Point3D, hitLight bool, diffuseColor color.RGBA) color.RGBA {
+func (sv SV_Matte) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor color.RGBA) color.RGBA {
+	hitPoint := shadeRec.HitPoint
 	x := hitPoint.X
 	// y := hitPoint.Y;
 	z := hitPoint.Z

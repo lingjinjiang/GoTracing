@@ -42,9 +42,9 @@ func Render(s *Scene) {
 					lcoalX := float64(x) - 0.5*float64(vp.Width) + (float64(p)+0.5)/float64(n)
 					lcoalY := float64(vp.Height)*0.5 - float64(y) + (float64(q)+0.5)/float64(n)
 					ray := s.ViewPoint.GetRay(lcoalX, lcoalY)
-					isHit, hitObject, hitPoint := tracer.Tracing(*s.ObjList, *ray)
 
-					localColor := tracer.GetColor(isHit, *hitObject, *hitPoint, *ray, *s.ObjList, s.Light)
+					shadeRec := tracer.Tracing(*s.ObjList, *ray)
+					localColor := tracer.GetColor(shadeRec, *s.ObjList, s.Light)
 
 					r += int(localColor.R)
 					g += int(localColor.G)

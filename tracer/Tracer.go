@@ -1,6 +1,7 @@
 package tracer
 
 import (
+	"GoTracing/brdf"
 	geo "GoTracing/geometry"
 	"GoTracing/light"
 	obj "GoTracing/object"
@@ -10,7 +11,7 @@ import (
 
 var BACKGOUND color.RGBA = color.RGBA{20, 20, 20, 255}
 
-func Tracing(objList list.List, ray geo.Ray) (bool, *obj.Object, *geo.Point3D) {
+func Tracing(objList list.List, ray geo.Ray) brdf.ShadeRec {
 	var min float64 = -1.0
 	var isHit bool = false
 	var hitPoint geo.Point3D
@@ -31,45 +32,54 @@ func Tracing(objList list.List, ray geo.Ray) (bool, *obj.Object, *geo.Point3D) {
 		}
 	}
 
+	shadeRec := brdf.ShadeRec{}
+
 	if isHit {
-		return true, &hitObject, &hitPoint
+		shadeRec.IsHit = true
+		shadeRec.Material = hitObject.GetMaterial()
+		shadeRec.HitPoint = hitPoint
+		shadeRec.Normal = hitObject.NormalVector(hitPoint)
+		shadeRec.Ray = ray
 	} else {
-		return false, nil, nil
+		shadeRec.IsHit = false
 	}
+	return shadeRec
 }
 
-func GetColor(isHit bool, hitObject obj.Object, hitPoint geo.Point3D, ray geo.Ray, objList list.List, light light.Light) color.RGBA {
-	if isHit {
-		localNormal := hitObject.NormalVector(hitPoint)
-		vOut := ray.Direction.Opposite()
+func GetColor(shadeRec brdf.ShadeRec, objList list.List, light light.Light) color.RGBA {
+	if shadeRec.IsHit {
+		localNormal := shadeRec.Normal
+		shadeRec.VOut = shadeRec.Ray.Direction.Opposite()
 
 		// temporary light direction
-		lightIn := light.GetDirection(hitPoint).Normalize()
+		lightIn := light.GetDirection(shadeRec.HitPoint).Normalize()
+		shadeRec.VIn = lightIn
 
 		lcoalRay := geo.Ray{
-			Endpoint:  hitPoint,
+			Endpoint:  shadeRec.HitPoint,
 			Direction: lightIn,
 		}
 
 		// simple shadow, if the ray from object hit point to light hit some other objects, then the point is in shadow
-		var notHitLight bool = false
-		notHitLight, _, _ = Tracing(objList, lcoalRay)
+		lightShadeRec := Tracing(objList, lcoalRay)
 
 		// simple diffuse
-		diffuseIn := localNormal.Add(ray.Direction.Normalize())
+		diffuseIn := localNormal.Add(shadeRec.Ray.Direction.Normalize())
 		diffuseRay := geo.Ray{
-			Endpoint:  hitPoint,
+			Endpoint:  shadeRec.HitPoint,
 			Direction: diffuseIn,
 		}
-		isDiffuse, diffuseObject, diffuseHitPoint := Tracing(objList, diffuseRay)
+		diffuseShadeRec := Tracing(objList, diffuseRay)
+		diffuseShadeRec.VIn = lightIn
+		diffuseShadeRec.VOut = diffuseIn
 		var diffuseColor color.RGBA
-		if isDiffuse {
-			diffuseColor = (*diffuseObject).GetMaterial().Shade(lightIn, diffuseIn, (*diffuseObject).NormalVector(*diffuseHitPoint), *diffuseHitPoint, true, BACKGOUND)
+		if diffuseShadeRec.IsHit {
+			diffuseColor = diffuseShadeRec.Material.Shade(diffuseShadeRec, true, BACKGOUND)
 		} else {
 			diffuseColor = BACKGOUND
 		}
 
-		return hitObject.GetMaterial().Shade(lightIn, vOut, localNormal, hitPoint, !notHitLight, diffuseColor)
+		return shadeRec.Material.Shade(shadeRec, !lightShadeRec.IsHit, diffuseColor)
 	} else {
 		return BACKGOUND
 	}
