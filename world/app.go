@@ -9,8 +9,8 @@ import (
 	"math"
 	"os"
 
-	"GoTracing/brdf"
 	geo "GoTracing/geometry"
+	"GoTracing/material"
 	obj "GoTracing/object"
 	"GoTracing/tracer"
 )
@@ -70,7 +70,7 @@ func Build(s *Scene, sceneFile string) {
 
 	// Add object to scene
 	sphere1 := obj.NewSphere(250, 40, 250, 75)
-	materail1 := brdf.SpecularPhong{
+	materail1 := material.SpecularPhong{
 		Ks:    0.6,
 		Kd:    0.75,
 		Cd:    0.5,
@@ -79,7 +79,7 @@ func Build(s *Scene, sceneFile string) {
 	sphere1.SetMaterial(materail1)
 
 	sphere2 := obj.NewSphere(250, 40, -250, 75)
-	materail2 := brdf.SpecularPhong{
+	materail2 := material.SpecularPhong{
 		Ks:    0.6,
 		Kd:    0.75,
 		Cd:    0.5,
@@ -88,7 +88,7 @@ func Build(s *Scene, sceneFile string) {
 	sphere2.SetMaterial(materail2)
 
 	sphere3 := obj.NewSphere(-250, 40, 250, 75)
-	materail3 := brdf.SpecularPhong{
+	materail3 := material.SpecularPhong{
 		Ks:    0.6,
 		Kd:    0.75,
 		Cd:    0.5,
@@ -97,7 +97,7 @@ func Build(s *Scene, sceneFile string) {
 	sphere3.SetMaterial(materail3)
 
 	sphere4 := obj.NewSphere(-250, 40, -250, 75)
-	materail4 := brdf.SpecularPhong{
+	materail4 := material.SpecularPhong{
 		Ks:    0.6,
 		Kd:    0.75,
 		Cd:    0.5,
@@ -106,7 +106,7 @@ func Build(s *Scene, sceneFile string) {
 	sphere4.SetMaterial(materail4)
 
 	sphere5 := obj.NewSphere(0, 40, 0, 75)
-	materail5 := brdf.SpecularPhong{
+	materail5 := material.SpecularPhong{
 		Ks:    0.1,
 		Kd:    0.9,
 		Cd:    0.9,
@@ -132,7 +132,7 @@ func Build(s *Scene, sceneFile string) {
 			Z: 0,
 		},
 	}
-	planeMaterial := brdf.SV_Matte{
+	planeMaterial := material.SV_Matte{
 		Color1: color.RGBA{255, 255, 255, 255},
 		Color2: color.RGBA{0, 0, 0, 255},
 		Size:   100,

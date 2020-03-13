@@ -1,9 +1,9 @@
 package tracer
 
 import (
-	"GoTracing/brdf"
 	geo "GoTracing/geometry"
 	"GoTracing/light"
+	"GoTracing/material"
 	obj "GoTracing/object"
 	"container/list"
 	"image/color"
@@ -11,7 +11,7 @@ import (
 
 var BACKGOUND color.RGBA = color.RGBA{20, 20, 20, 255}
 
-func Tracing(objList list.List, ray geo.Ray) brdf.ShadeRec {
+func Tracing(objList list.List, ray geo.Ray) material.ShadeRec {
 	var min float64 = -1.0
 	var isHit bool = false
 	var hitPoint geo.Point3D
@@ -32,7 +32,7 @@ func Tracing(objList list.List, ray geo.Ray) brdf.ShadeRec {
 		}
 	}
 
-	shadeRec := brdf.ShadeRec{}
+	shadeRec := material.ShadeRec{}
 
 	if isHit {
 		shadeRec.IsHit = true
@@ -46,7 +46,7 @@ func Tracing(objList list.List, ray geo.Ray) brdf.ShadeRec {
 	return shadeRec
 }
 
-func GetColor(shadeRec brdf.ShadeRec, objList list.List, light light.Light) color.RGBA {
+func GetColor(shadeRec material.ShadeRec, objList list.List, light light.Light) color.RGBA {
 	if shadeRec.IsHit {
 		localNormal := shadeRec.Normal
 		shadeRec.VOut = shadeRec.Ray.Direction.Opposite()

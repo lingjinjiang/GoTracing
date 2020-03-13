@@ -1,8 +1,8 @@
 package object
 
 import (
-	"GoTracing/brdf"
 	geo "GoTracing/geometry"
+	"GoTracing/material"
 
 	"math"
 )
@@ -10,7 +10,7 @@ import (
 type Sphere struct {
 	center   geo.Point3D
 	radius   float64
-	material brdf.BRDF
+	material material.Material
 }
 
 // if the endpoint of the ray is (a, b, c) and direction is (dx, dy, dz)
@@ -80,10 +80,10 @@ func (s Sphere) Radius() float64 {
 	return s.radius
 }
 
-func (s *Sphere) SetMaterial(material brdf.BRDF) {
+func (s *Sphere) SetMaterial(material material.Material) {
 	s.material = material
 }
 
-func (s Sphere) GetMaterial() brdf.BRDF {
+func (s Sphere) GetMaterial() material.Material {
 	return s.material
 }

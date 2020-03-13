@@ -1,4 +1,4 @@
-package brdf
+package material
 
 import (
 	geo "GoTracing/geometry"
