@@ -120,27 +120,133 @@ func Build(s *Scene, sceneFile string) {
 	s.ObjList.PushBack(sphere4)
 	s.ObjList.PushBack(sphere5)
 
-	plane1 := obj.Plane{
-		Normal: geo.Vector3D{
-			X: 0,
-			Y: 1,
+	plane1 := obj.Rect{
+		Position: geo.Point3D{
+			X: 250,
+			Y: -100,
+			Z: 250,
+		},
+		Length: 300,
+		LVector: geo.Vector3D{
+			X: 1,
+			Y: 0,
 			Z: 0,
 		},
+		Width: 300,
+		WVector: geo.Vector3D{
+			X: 0,
+			Y: 0,
+			Z: 1,
+		},
+	}
+
+	plane2 := obj.Rect{
+		Position: geo.Point3D{
+			X: -250,
+			Y: -100,
+			Z: 250,
+		},
+		Length: 300,
+		LVector: geo.Vector3D{
+			X: 1,
+			Y: 0,
+			Z: 0,
+		},
+		Width: 300,
+		WVector: geo.Vector3D{
+			X: 0,
+			Y: 0,
+			Z: 1,
+		},
+	}
+
+	plane3 := obj.Rect{
+		Position: geo.Point3D{
+			X: -250,
+			Y: -100,
+			Z: -250,
+		},
+		Length: 300,
+		LVector: geo.Vector3D{
+			X: 1,
+			Y: 0,
+			Z: 0,
+		},
+		Width: 300,
+		WVector: geo.Vector3D{
+			X: 0,
+			Y: 0,
+			Z: 1,
+		},
+	}
+
+	plane4 := obj.Rect{
+		Position: geo.Point3D{
+			X: 250,
+			Y: -100,
+			Z: -250,
+		},
+		Length: 300,
+		LVector: geo.Vector3D{
+			X: 1,
+			Y: 0,
+			Z: 0,
+		},
+		Width: 300,
+		WVector: geo.Vector3D{
+			X: 0,
+			Y: 0,
+			Z: 1,
+		},
+	}
+
+	bottom := obj.Rect{
 		Position: geo.Point3D{
 			X: 0,
-			Y: -200,
+			Y: -150,
 			Z: 0,
 		},
+		Length: 1200,
+		LVector: geo.Vector3D{
+			X: 1,
+			Y: 0,
+			Z: 0,
+		},
+		Width: 1000,
+		WVector: geo.Vector3D{
+			X: 0,
+			Y: 0,
+			Z: 1,
+		},
 	}
-	planeMaterial := material.SV_Matte{
+
+	planeMaterial1 := material.SV_Matte{
+		Color1: color.RGBA{225, 100, 255, 255},
+		Color2: color.RGBA{100, 255, 160, 255},
+		Size:   50,
+	}
+
+	planeMaterial2 := material.SV_Matte{
+		Color1: color.RGBA{100, 200, 255, 255},
+		Color2: color.RGBA{225, 240, 120, 255},
+		Size:   50,
+	}
+
+	bottomMaterial := material.SV_Matte{
 		Color1: color.RGBA{255, 255, 255, 255},
 		Color2: color.RGBA{0, 0, 0, 255},
-		Size:   100,
+		Size:   75,
 	}
-	// planeMaterial := brdf.Matte {
-	// 	Color: color.RGBA {255, 255, 255, 255},
-	// }
-	plane1.SetMaterial(planeMaterial)
+
+	plane1.SetMaterial(planeMaterial1)
+	plane2.SetMaterial(planeMaterial2)
+	plane3.SetMaterial(planeMaterial1)
+	plane4.SetMaterial(planeMaterial2)
+	bottom.SetMaterial(bottomMaterial)
 
 	s.ObjList.PushBack(plane1)
+	s.ObjList.PushBack(plane2)
+	s.ObjList.PushBack(plane3)
+	s.ObjList.PushBack(plane4)
+	s.ObjList.PushBack(bottom)
 }
