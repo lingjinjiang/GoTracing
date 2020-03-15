@@ -17,9 +17,9 @@ import (
 
 const INT_MAX = ^int(0)
 
-func Render(s *Scene) {
+func Render(s *Scene, config Configuration) {
 	fmt.Println("Rendering ...")
-	file, err := os.Create("/home/ling/test.jpg")
+	file, err := os.Create(config.Output)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -64,9 +64,9 @@ func Render(s *Scene) {
 	jpeg.Encode(file, img, nil)
 }
 
-func Build(s *Scene, sceneFile string) {
+func Build(s *Scene, configFile string, output string) Configuration {
 	// @Todo load configuration file
-	fmt.Println("load configuration from ", sceneFile)
+	//fmt.Println("load configuration from ", sceneFile)
 
 	// Add object to scene
 	sphere1 := obj.NewSphere(250, 40, 250, 75)
@@ -249,4 +249,8 @@ func Build(s *Scene, sceneFile string) {
 	s.ObjList.PushBack(plane3)
 	s.ObjList.PushBack(plane4)
 	s.ObjList.PushBack(bottom)
+
+	return Configuration{
+		Output: output,
+	}
 }
