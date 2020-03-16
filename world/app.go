@@ -9,6 +9,7 @@ import (
 	"math"
 	"os"
 
+	"GoTracing/config"
 	geo "GoTracing/geometry"
 	"GoTracing/material"
 	obj "GoTracing/object"
@@ -17,8 +18,8 @@ import (
 
 const INT_MAX = ^int(0)
 
-func Render(s *Scene, config Configuration) {
-	fmt.Println("Rendering ...")
+func Render(s *Scene, config config.Configuration) {
+	fmt.Println("Rendering ..." + config.Output)
 	file, err := os.Create(config.Output)
 	if err != nil {
 		log.Fatal(err)
@@ -64,7 +65,7 @@ func Render(s *Scene, config Configuration) {
 	jpeg.Encode(file, img, nil)
 }
 
-func Build(s *Scene, configFile string, output string) Configuration {
+func Build(s *Scene, config config.Configuration) {
 	// @Todo load configuration file
 	//fmt.Println("load configuration from ", sceneFile)
 
@@ -249,8 +250,4 @@ func Build(s *Scene, configFile string, output string) Configuration {
 	s.ObjList.PushBack(plane3)
 	s.ObjList.PushBack(plane4)
 	s.ObjList.PushBack(bottom)
-
-	return Configuration{
-		Output: output,
-	}
 }

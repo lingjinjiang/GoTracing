@@ -1,10 +1,9 @@
 package cmd
 
 import (
+	"GoTracing/config"
 	"GoTracing/light"
 	"GoTracing/world"
-	"os"
-	"os/user"
 
 	geo "GoTracing/geometry"
 	"container/list"
@@ -14,20 +13,11 @@ import (
 )
 
 var (
-	outputPath    string
-	configFile    string
-	defaultOutput string
+	outputPath string
+	configFile string
 )
 
 func NewGoTracingCommand() *cobra.Command {
-
-	currentUser, err := user.Current()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	defaultOutput = currentUser.HomeDir + "/" + "GoTracing.jpg"
 
 	cmd := &cobra.Command{
 		Run: run,
@@ -43,14 +33,18 @@ func NewGoTracingCommand() *cobra.Command {
 
 func run(cmd *cobra.Command, args []string) {
 
-	checkConfigurationFile(configFile)
+	config, err := config.NewConfiguration(configFile)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-	checkoutOutput(outputPath)
+	checkoutOutput(config, outputPath)
 
 	vp := world.ViewPlane{
-		Width:   1280,
-		Height:  720,
-		Samples: 16,
+		Width:   config.Width,
+		Height:  config.Height,
+		Samples: config.Sample,
 	}
 
 	camera := world.Camera{
@@ -74,17 +68,14 @@ func run(cmd *cobra.Command, args []string) {
 		},
 	}
 
-	config := world.Build(&scene, configFile, outputPath)
-	world.Render(&scene, config)
+	world.Build(&scene, *config)
+	world.Render(&scene, *config)
 }
 
-func checkoutOutput(output string) {
-	if output == "" {
-		outputPath = defaultOutput
-		fmt.Println("[Using default output path \"" + outputPath + "\".]")
+func checkoutOutput(config *config.Configuration, output string) {
+	if output != "" {
+		config.Output = output
+		fmt.Println("[Using give output path \"" + outputPath + "\" to override the path in configuration.]")
 	}
-}
 
-func checkConfigurationFile(configFile string) {
-	fmt.Println("[Configuration file is useless at current time. It will be using in the future.]")
 }
