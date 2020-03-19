@@ -8,6 +8,8 @@ import (
 	"log"
 	"math"
 	"os"
+	"sync"
+	"time"
 
 	"GoTracing/config"
 	geo "GoTracing/geometry"
@@ -17,6 +19,11 @@ import (
 )
 
 const INT_MAX = ^int(0)
+
+var (
+	wg       sync.WaitGroup
+	threadCh chan int
+)
 
 func Render(s *Scene, config config.Configuration) {
 	fmt.Println("Rendering ..." + config.Output)
@@ -28,40 +35,19 @@ func Render(s *Scene, config config.Configuration) {
 
 	vp := s.VPlane
 	img := image.NewRGBA(image.Rect(0, 0, int(vp.Width), int(vp.Height)))
+	threadCh = make(chan int, config.RenderThreads)
 
-	// sample
-	numSamples := vp.Samples
-	n := int(math.Sqrt(float64(numSamples)))
-
+	wg.Add(int(vp.Width) * int(vp.Height))
+	beginTime := time.Now()
 	for x := 0.0; x < vp.Width; x++ {
 		for y := 0.0; y < vp.Height; y++ {
-			r := 0
-			g := 0
-			b := 0
-			for p := 0; p < n; p++ {
-				for q := 0; q < n; q++ {
-					lcoalX := float64(x) - 0.5*float64(vp.Width) + (float64(p)+0.5)/float64(n)
-					lcoalY := float64(vp.Height)*0.5 - float64(y) + (float64(q)+0.5)/float64(n)
-					ray := s.ViewPoint.GetRay(lcoalX, lcoalY)
-
-					shadeRec := tracer.Tracing(*s.ObjList, *ray)
-					localColor := tracer.GetColor(shadeRec, *s.ObjList, s.Light)
-
-					r += int(localColor.R)
-					g += int(localColor.G)
-					b += int(localColor.B)
-				}
-			}
-			color := color.RGBA{
-				R: uint8(r / numSamples),
-				G: uint8(g / numSamples),
-				B: uint8(b / numSamples),
-				A: 255,
-			}
-
-			img.Set(int(x), int(y), color)
+			threadCh <- 1
+			go Tracing(x, y, vp, s, img)
 		}
 	}
+	wg.Wait()
+	finishTime := time.Now()
+	fmt.Println("Using", finishTime.Second()-beginTime.Second(), "seconds")
 	jpeg.Encode(file, img, nil)
 }
 
@@ -250,4 +236,36 @@ func Build(s *Scene, config config.Configuration) {
 	s.ObjList.PushBack(plane3)
 	s.ObjList.PushBack(plane4)
 	s.ObjList.PushBack(bottom)
+}
+
+func Tracing(x float64, y float64, vp *ViewPlane, s *Scene, img *image.RGBA) {
+	defer wg.Done()
+	numSamples := vp.Samples
+	n := int(math.Sqrt(float64(numSamples)))
+	r := 0
+	g := 0
+	b := 0
+	for p := 0; p < n; p++ {
+		for q := 0; q < n; q++ {
+			lcoalX := float64(x) - 0.5*float64(vp.Width) + (float64(p)+0.5)/float64(n)
+			lcoalY := float64(vp.Height)*0.5 - float64(y) + (float64(q)+0.5)/float64(n)
+			ray := s.ViewPoint.GetRay(lcoalX, lcoalY)
+
+			shadeRec := tracer.Tracing(*s.ObjList, *ray)
+			localColor := tracer.GetColor(shadeRec, *s.ObjList, s.Light)
+
+			r += int(localColor.R)
+			g += int(localColor.G)
+			b += int(localColor.B)
+		}
+	}
+	color := color.RGBA{
+		R: uint8(r / numSamples),
+		G: uint8(g / numSamples),
+		B: uint8(b / numSamples),
+		A: 255,
+	}
+
+	img.Set(int(x), int(y), color)
+	<-threadCh
 }
