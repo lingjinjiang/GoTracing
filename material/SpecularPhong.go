@@ -1,17 +1,34 @@
 package material
 
 import (
-	geo "GoTracing/geometry"
+	"GoTracing/material/brdf"
 
 	"image/color"
-	"math"
 )
 
 type SpecularPhong struct {
-	Ks    float64
-	Kd    float64
-	Cd    float64
-	Color color.RGBA
+	ambient  brdf.BRDF
+	diffuse  brdf.BRDF
+	specular brdf.GlossySpecular
+	Color    color.RGBA
+}
+
+func NewSpecularPhong(ks float64, exp float64, kd float64, color color.RGBA) SpecularPhong {
+	phong := SpecularPhong{
+		ambient: brdf.Lambertian{
+			Kd: kd,
+		},
+		diffuse: brdf.Lambertian{
+			Kd: kd,
+		},
+		specular: brdf.GlossySpecular{
+			Ks:  ks,
+			Exp: exp,
+		},
+		Color: color,
+	}
+
+	return phong
 }
 
 func (sp SpecularPhong) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor color.RGBA) color.RGBA {
@@ -20,16 +37,16 @@ func (sp SpecularPhong) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor col
 	vIn := shadeRec.VIn
 	hitPoint := shadeRec.HitPoint
 
-	reflect := sp.ambient() * normal.Dot(vOut)
+	reflect := sp.ambient.Rho() * normal.Dot(vOut)
 	if hitLight {
-		reflect = reflect + sp.specular(hitPoint, normal, vOut, vIn)
+		reflect = reflect + sp.specular.F(hitPoint, normal, vOut, vIn)
 	}
 
 	if reflect > 1 {
 		reflect = 1
 	}
 
-	diffuse := sp.lambertion() * normal.Dot(vOut)
+	diffuse := sp.diffuse.F(hitPoint, normal, vOut, vIn) * normal.Dot(vOut)
 
 	finalR := float64(sp.Color.R)*reflect + float64(diffuseColor.R)*diffuse
 	if finalR > 255 {
@@ -53,31 +70,4 @@ func (sp SpecularPhong) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor col
 		A: 255,
 	}
 	// return diffuseColor
-
-}
-
-func (sp SpecularPhong) ambient() float64 {
-	return sp.Kd * sp.Cd
-}
-
-func (sp SpecularPhong) lambertion() float64 {
-	return sp.Kd * sp.Cd * invPi
-}
-
-func (sp SpecularPhong) specular(hitPoint geo.Point3D, normal geo.Vector3D, vOut geo.Vector3D, vIn geo.Vector3D) float64 {
-	var result float64 = 0.0
-	NorDotIn := normal.Dot(vIn)
-	r := geo.Vector3D{
-		X: -vIn.X + 2.0*NorDotIn*normal.X,
-		Y: -vIn.Y + 2.0*NorDotIn*normal.Y,
-		Z: -vIn.Z + 2.0*NorDotIn*normal.Z,
-	}
-
-	RDotOut := r.Dot(vOut)
-
-	if RDotOut > 0.0 {
-		result = sp.Ks * math.Pow(RDotOut, 2)
-	}
-
-	return result
 }

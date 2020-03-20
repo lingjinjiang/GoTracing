@@ -57,48 +57,24 @@ func Build(s *Scene, config config.Configuration) {
 
 	// Add object to scene
 	sphere1 := obj.NewSphere(250, 40, 250, 75)
-	materail1 := material.SpecularPhong{
-		Ks:    0.6,
-		Kd:    0.75,
-		Cd:    0.5,
-		Color: color.RGBA{255, 0, 255, 255},
-	}
+	materail1 := material.NewSpecularPhong(0.35, 3, 0.7, color.RGBA{255, 0, 255, 255})
 	sphere1.SetMaterial(materail1)
 
 	sphere2 := obj.NewSphere(250, 40, -250, 75)
-	materail2 := material.SpecularPhong{
-		Ks:    0.6,
-		Kd:    0.75,
-		Cd:    0.5,
-		Color: color.RGBA{0, 255, 255, 255},
-	}
+	materail2 := material.NewSpecularPhong(0.35, 3, 0.7, color.RGBA{0, 255, 255, 255})
 	sphere2.SetMaterial(materail2)
 
 	sphere3 := obj.NewSphere(-250, 40, 250, 75)
-	materail3 := material.SpecularPhong{
-		Ks:    0.6,
-		Kd:    0.75,
-		Cd:    0.5,
-		Color: color.RGBA{255, 255, 0, 255},
-	}
+	materail3 := material.NewSpecularPhong(0.35, 3, 0.7, color.RGBA{255, 255, 0, 255})
 	sphere3.SetMaterial(materail3)
 
 	sphere4 := obj.NewSphere(-250, 40, -250, 75)
-	materail4 := material.SpecularPhong{
-		Ks:    0.6,
-		Kd:    0.75,
-		Cd:    0.5,
-		Color: color.RGBA{128, 128, 128, 255},
-	}
+	materail4 := material.NewSpecularPhong(0.35, 3, 0.7, color.RGBA{128, 128, 128, 255})
 	sphere4.SetMaterial(materail4)
 
 	sphere5 := obj.NewSphere(0, 40, 0, 75)
-	materail5 := material.SpecularPhong{
-		Ks:    0.1,
-		Kd:    0.9,
-		Cd:    0.9,
-		Color: color.RGBA{255, 255, 255, 255},
-	}
+	materail5 := material.NewSpecularPhong(0.35, 3, 0.7, color.RGBA{255, 255, 255, 255})
+
 	sphere5.SetMaterial(materail5)
 
 	s.ObjList.PushBack(sphere1)
