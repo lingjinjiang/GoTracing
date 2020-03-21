@@ -4,10 +4,10 @@ import (
 	"GoTracing/config"
 	"GoTracing/light"
 	"GoTracing/world"
+	"log"
 
 	geo "GoTracing/geometry"
 	"container/list"
-	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -35,7 +35,7 @@ func run(cmd *cobra.Command, args []string) {
 
 	config, err := config.NewConfiguration(configFile)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal("Unable to load configuration file", configFile)
 		return
 	}
 
@@ -75,7 +75,7 @@ func run(cmd *cobra.Command, args []string) {
 func checkoutOutput(config *config.Configuration, output string) {
 	if output != "" {
 		config.Output = output
-		fmt.Println("[Using give output path \"" + outputPath + "\" to override the path in configuration.]")
+		log.Println("[Using give output path \"" + outputPath + "\" to override the path in configuration.]")
 	}
 
 }

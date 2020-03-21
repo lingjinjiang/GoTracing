@@ -1,7 +1,6 @@
 package world
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 	"image/jpeg"
@@ -26,10 +25,10 @@ var (
 )
 
 func Render(s *Scene, config config.Configuration) {
-	fmt.Println("Rendering ..." + config.Output)
+	log.Println("Rendering", config.Output, "...")
 	file, err := os.Create(config.Output)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err, "Unable to create image", config.Output)
 	}
 	defer file.Close()
 
@@ -47,13 +46,11 @@ func Render(s *Scene, config config.Configuration) {
 	}
 	wg.Wait()
 	finishTime := time.Now()
-	fmt.Println("Using", finishTime.Second()-beginTime.Second(), "seconds")
+	log.Println("Using", finishTime.Second()-beginTime.Second(), "seconds")
 	jpeg.Encode(file, img, nil)
 }
 
 func Build(s *Scene, config config.Configuration) {
-	// @Todo load configuration file
-	//fmt.Println("load configuration from ", sceneFile)
 
 	// Add object to scene
 	sphere1 := obj.NewSphere(250, 40, 250, 75)
