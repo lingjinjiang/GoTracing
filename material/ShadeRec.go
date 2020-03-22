@@ -2,6 +2,7 @@ package material
 
 import (
 	geo "GoTracing/geometry"
+	"GoTracing/light"
 )
 
 type ShadeRec struct {
@@ -12,4 +13,5 @@ type ShadeRec struct {
 	Normal   geo.Vector3D
 	VIn      geo.Vector3D
 	VOut     geo.Vector3D
+	Light    light.Light
 }

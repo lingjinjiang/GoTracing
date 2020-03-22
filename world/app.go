@@ -51,26 +51,64 @@ func Render(s *Scene, config config.Configuration) {
 }
 
 func Build(s *Scene, config config.Configuration) {
+	someSphere(s, config)
+	// singleSphere(s, config)
+}
+
+func Tracing(x float64, y float64, vp *ViewPlane, s *Scene, img *image.RGBA) {
+	defer wg.Done()
+	numSamples := vp.Samples
+	n := int(math.Sqrt(float64(numSamples)))
+	r := 0
+	g := 0
+	b := 0
+	for p := 0; p < n; p++ {
+		for q := 0; q < n; q++ {
+			lcoalX := float64(x) - 0.5*float64(vp.Width) + (float64(p)+0.5)/float64(n)
+			lcoalY := float64(vp.Height)*0.5 - float64(y) + (float64(q)+0.5)/float64(n)
+			ray := s.ViewPoint.GetRay(lcoalX, lcoalY)
+
+			shadeRec := tracer.Tracing(*s.ObjList, s.Light, *ray)
+
+			localColor := tracer.GetColor(shadeRec, *s.ObjList, s.Light)
+
+			r += int(localColor.R)
+			g += int(localColor.G)
+			b += int(localColor.B)
+		}
+	}
+	color := color.RGBA{
+		R: uint8(r / numSamples),
+		G: uint8(g / numSamples),
+		B: uint8(b / numSamples),
+		A: 255,
+	}
+
+	img.Set(int(x), int(y), color)
+	<-threadCh
+}
+
+func someSphere(s *Scene, config config.Configuration) {
 
 	// Add object to scene
 	sphere1 := obj.NewSphere(250, 40, 250, 75)
-	materail1 := material.NewSpecularPhong(0.35, 3, 0.7, color.RGBA{255, 0, 255, 255})
+	materail1 := material.NewSpecularPhong(0.3, 3, 0.5, color.RGBA{255, 0, 255, 255})
 	sphere1.SetMaterial(materail1)
 
 	sphere2 := obj.NewSphere(250, 40, -250, 75)
-	materail2 := material.NewSpecularPhong(0.35, 3, 0.7, color.RGBA{0, 255, 255, 255})
+	materail2 := material.NewSpecularPhong(0.3, 3, 0.5, color.RGBA{0, 255, 255, 255})
 	sphere2.SetMaterial(materail2)
 
 	sphere3 := obj.NewSphere(-250, 40, 250, 75)
-	materail3 := material.NewSpecularPhong(0.35, 3, 0.7, color.RGBA{255, 255, 0, 255})
+	materail3 := material.NewSpecularPhong(0.3, 3, 0.5, color.RGBA{255, 255, 0, 255})
 	sphere3.SetMaterial(materail3)
 
 	sphere4 := obj.NewSphere(-250, 40, -250, 75)
-	materail4 := material.NewSpecularPhong(0.35, 3, 0.7, color.RGBA{128, 128, 128, 255})
+	materail4 := material.NewSpecularPhong(0.3, 3, 0.5, color.RGBA{128, 128, 128, 255})
 	sphere4.SetMaterial(materail4)
 
 	sphere5 := obj.NewSphere(0, 40, 0, 75)
-	materail5 := material.NewSpecularPhong(0.35, 3, 0.7, color.RGBA{255, 255, 255, 255})
+	materail5 := material.NewSpecularPhong(0.3, 3, 0.5, color.RGBA{255, 255, 255, 255})
 
 	sphere5.SetMaterial(materail5)
 
@@ -211,34 +249,37 @@ func Build(s *Scene, config config.Configuration) {
 	s.ObjList.PushBack(bottom)
 }
 
-func Tracing(x float64, y float64, vp *ViewPlane, s *Scene, img *image.RGBA) {
-	defer wg.Done()
-	numSamples := vp.Samples
-	n := int(math.Sqrt(float64(numSamples)))
-	r := 0
-	g := 0
-	b := 0
-	for p := 0; p < n; p++ {
-		for q := 0; q < n; q++ {
-			lcoalX := float64(x) - 0.5*float64(vp.Width) + (float64(p)+0.5)/float64(n)
-			lcoalY := float64(vp.Height)*0.5 - float64(y) + (float64(q)+0.5)/float64(n)
-			ray := s.ViewPoint.GetRay(lcoalX, lcoalY)
+func singleSphere(s *Scene, config config.Configuration) {
+	sphere1 := obj.NewSphere(0, 120, 0, 120)
+	materail1 := material.NewSpecularPhong(0.3, 3, 0.5, color.RGBA{255, 255, 255, 255})
+	sphere1.SetMaterial(materail1)
+	s.ObjList.PushBack(sphere1)
 
-			shadeRec := tracer.Tracing(*s.ObjList, *ray)
-			localColor := tracer.GetColor(shadeRec, *s.ObjList, s.Light)
-
-			r += int(localColor.R)
-			g += int(localColor.G)
-			b += int(localColor.B)
-		}
-	}
-	color := color.RGBA{
-		R: uint8(r / numSamples),
-		G: uint8(g / numSamples),
-		B: uint8(b / numSamples),
-		A: 255,
+	bottom := obj.Rect{
+		Position: geo.Point3D{
+			X: 0,
+			Y: 0,
+			Z: 0,
+		},
+		Length: 600,
+		LVector: geo.Vector3D{
+			X: 1,
+			Y: 0,
+			Z: 0,
+		},
+		Width: 600,
+		WVector: geo.Vector3D{
+			X: 0,
+			Y: 0,
+			Z: 1,
+		},
 	}
 
-	img.Set(int(x), int(y), color)
-	<-threadCh
+	bottomMaterial := material.SV_Matte{
+		Color1: color.RGBA{255, 255, 255, 255},
+		Color2: color.RGBA{0, 0, 0, 255},
+		Size:   75,
+	}
+	bottom.SetMaterial(bottomMaterial)
+	s.ObjList.PushBack(bottom)
 }

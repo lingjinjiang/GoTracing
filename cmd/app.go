@@ -4,6 +4,7 @@ import (
 	"GoTracing/config"
 	"GoTracing/light"
 	"GoTracing/world"
+	"image/color"
 	"log"
 
 	geo "GoTracing/geometry"
@@ -65,6 +66,8 @@ func run(cmd *cobra.Command, args []string) {
 				Y: 10000000,
 				Z: 10000000,
 			},
+			Ls:    1.0,
+			Color: color.RGBA{255, 255, 255, 255},
 		},
 	}
 

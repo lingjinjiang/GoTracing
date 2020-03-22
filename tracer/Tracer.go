@@ -11,7 +11,7 @@ import (
 
 var BACKGOUND color.RGBA = color.RGBA{20, 20, 20, 255}
 
-func Tracing(objList list.List, ray geo.Ray) material.ShadeRec {
+func Tracing(objList list.List, light light.Light, ray geo.Ray) material.ShadeRec {
 	var min float64 = -1.0
 	var isHit bool = false
 	var hitPoint geo.Point3D
@@ -40,6 +40,7 @@ func Tracing(objList list.List, ray geo.Ray) material.ShadeRec {
 		shadeRec.HitPoint = hitPoint
 		shadeRec.Normal = hitObject.NormalVector(hitPoint)
 		shadeRec.Ray = ray
+		shadeRec.Light = light
 	} else {
 		shadeRec.IsHit = false
 	}
@@ -61,7 +62,7 @@ func GetColor(shadeRec material.ShadeRec, objList list.List, light light.Light) 
 		}
 
 		// simple shadow, if the ray from object hit point to light hit some other objects, then the point is in shadow
-		lightShadeRec := Tracing(objList, lcoalRay)
+		lightShadeRec := Tracing(objList, light, lcoalRay)
 
 		// simple diffuse
 		diffuseIn := localNormal.Add(shadeRec.Ray.Direction.Normalize())
@@ -69,7 +70,7 @@ func GetColor(shadeRec material.ShadeRec, objList list.List, light light.Light) 
 			Endpoint:  shadeRec.HitPoint,
 			Direction: diffuseIn,
 		}
-		diffuseShadeRec := Tracing(objList, diffuseRay)
+		diffuseShadeRec := Tracing(objList, light, diffuseRay)
 		diffuseShadeRec.VIn = lightIn
 		diffuseShadeRec.VOut = diffuseIn
 		var diffuseColor color.RGBA

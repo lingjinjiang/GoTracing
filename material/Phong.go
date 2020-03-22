@@ -36,16 +36,25 @@ func (p Phong) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor color.RGBA) 
 	vOut := shadeRec.VOut
 	vIn := shadeRec.VIn
 	hitPoint := shadeRec.HitPoint
+	lightColor := shadeRec.Light.GetColor()
+	ambientColor := lightColor
 
-	reflect := p.ambient.Rho() * normal.Dot(vOut)
+	reflectR := float64(ambientColor.R) * p.ambient.Rho() * normal.Dot(vOut)
+	reflectG := float64(ambientColor.G) * p.ambient.Rho() * normal.Dot(vOut)
+	reflectB := float64(ambientColor.B) * p.ambient.Rho() * normal.Dot(vOut)
+	reflectA := float64(ambientColor.A) * p.ambient.Rho() * normal.Dot(vOut)
 
 	if hitLight {
-		reflect = reflect + p.diffuse.F(hitPoint, normal, vOut, vIn) + p.specular.F(hitPoint, normal, vOut, vIn)
+		reflectR = reflectR + (p.diffuse.F(hitPoint, normal, vOut, vIn)+p.specular.F(hitPoint, normal, vOut, vIn))*float64(lightColor.R)
+		reflectG = reflectG + (p.diffuse.F(hitPoint, normal, vOut, vIn)+p.specular.F(hitPoint, normal, vOut, vIn))*float64(lightColor.G)
+		reflectB = reflectB + (p.diffuse.F(hitPoint, normal, vOut, vIn)+p.specular.F(hitPoint, normal, vOut, vIn))*float64(lightColor.B)
+		reflectA = reflectA + (p.diffuse.F(hitPoint, normal, vOut, vIn)+p.specular.F(hitPoint, normal, vOut, vIn))*float64(lightColor.A)
 	}
 
-	if reflect > 1 {
-		reflect = 1
-	}
+	reflectR = FixRGBA(float64(p.Color.R) * reflectR / 255)
+	reflectG = FixRGBA(float64(p.Color.G) * reflectG / 255)
+	reflectB = FixRGBA(float64(p.Color.B) * reflectB / 255)
+	reflectA = FixRGBA(float64(p.Color.A) * reflectB / 255)
 
-	return color.RGBA{uint8(float64(p.Color.R) * reflect), uint8(float64(p.Color.G) * reflect), uint8(float64(p.Color.B) * reflect), 255}
+	return color.RGBA{uint8(reflectR), uint8(reflectG), uint8(reflectB), uint8(reflectA)}
 }
