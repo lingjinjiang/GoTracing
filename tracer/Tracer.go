@@ -11,6 +11,7 @@ import (
 
 var BACKGOUND color.RGBA = color.RGBA{20, 20, 20, 255}
 
+// tracing the ray and return the shade info of this ray
 func Tracing(objList list.List, light light.Light, ray geo.Ray) material.ShadeRec {
 	var min float64 = -1.0
 	var isHit bool = false
@@ -47,6 +48,7 @@ func Tracing(objList list.List, light light.Light, ray geo.Ray) material.ShadeRe
 	return shadeRec
 }
 
+// get the color of ray
 func GetColor(shadeRec material.ShadeRec, objList list.List, light light.Light) color.RGBA {
 	if shadeRec.IsHit {
 		localNormal := shadeRec.Normal

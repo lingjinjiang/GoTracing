@@ -5,6 +5,7 @@ import (
 	"math"
 )
 
+// simple two color materail for test
 type SV_Matte struct {
 	Color1 color.RGBA
 	Color2 color.RGBA

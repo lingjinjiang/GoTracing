@@ -13,6 +13,7 @@ type SpecularPhong struct {
 	Color    color.RGBA
 }
 
+// phong with simple mirror reflection
 func NewSpecularPhong(ks float64, exp float64, kd float64, color color.RGBA) SpecularPhong {
 	phong := SpecularPhong{
 		ambient: brdf.Lambertian{

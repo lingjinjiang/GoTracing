@@ -4,6 +4,7 @@ import (
 	"image/color"
 )
 
+// simple single color material for test
 type Matte struct {
 	Color color.RGBA
 }

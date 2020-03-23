@@ -5,6 +5,7 @@ import (
 )
 
 type Material interface {
+	// return the color of material with lights
 	Shade(shadeRec ShadeRec, hitLight bool, diffuseColor color.RGBA) color.RGBA
 }
 
