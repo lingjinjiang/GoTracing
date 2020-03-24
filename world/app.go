@@ -51,8 +51,8 @@ func Render(s *Scene, config config.Configuration) {
 }
 
 func Build(s *Scene, config config.Configuration) {
-	someSphere(s, config)
-	// singleSphere(s, config)
+	// someSphere(s, config)
+	singleSphere(s, config)
 }
 
 func Tracing(x float64, y float64, vp *ViewPlane, s *Scene, img *image.RGBA) {
@@ -261,15 +261,15 @@ func singleSphere(s *Scene, config config.Configuration) {
 			Y: 0,
 			Z: 0,
 		},
-		Length: 600,
+		Length: 800,
 		LVector: geo.Vector3D{
 			X: 1,
 			Y: 0,
-			Z: 0,
+			Z: 1,
 		},
-		Width: 600,
+		Width: 800,
 		WVector: geo.Vector3D{
-			X: 0,
+			X: -1,
 			Y: 0,
 			Z: 1,
 		},

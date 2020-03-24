@@ -87,3 +87,15 @@ func (s *Sphere) SetMaterial(material material.Material) {
 func (s Sphere) GetMaterial() material.Material {
 	return s.material
 }
+
+func (s Sphere) GetPosition() geo.Point3D {
+	return geo.Point3D{}
+}
+
+func (s Sphere) GetObjX() geo.Vector3D {
+	return geo.Vector3D{}
+}
+
+func (s Sphere) GetObjZ() geo.Vector3D {
+	return geo.Vector3D{}
+}

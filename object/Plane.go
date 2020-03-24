@@ -36,3 +36,15 @@ func (plane *Plane) SetMaterial(material material.Material) {
 func (plane Plane) GetMaterial() material.Material {
 	return plane.material
 }
+
+func (plane Plane) GetPosition() geo.Point3D {
+	return geo.Point3D{}
+}
+
+func (plane Plane) GetObjX() geo.Vector3D {
+	return geo.Vector3D{}
+}
+
+func (plane Plane) GetObjZ() geo.Vector3D {
+	return geo.Vector3D{}
+}

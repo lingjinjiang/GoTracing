@@ -62,3 +62,15 @@ func (rect *Rect) SetMaterial(material material.Material) {
 func (rect Rect) GetMaterial() material.Material {
 	return rect.material
 }
+
+func (rect Rect) GetPosition() geo.Point3D {
+	return rect.Position
+}
+
+func (rect Rect) GetObjX() geo.Vector3D {
+	return rect.LVector
+}
+
+func (rect Rect) GetObjZ() geo.Vector3D {
+	return rect.WVector
+}

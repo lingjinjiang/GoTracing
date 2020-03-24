@@ -12,4 +12,8 @@ type Object interface {
 	NormalVector(point geo.Point3D) geo.Vector3D
 	// SetMaterial(material color.RGBA)
 	GetMaterial() material.Material
+
+	GetPosition() geo.Point3D
+	GetObjX() geo.Vector3D
+	GetObjZ() geo.Vector3D
 }

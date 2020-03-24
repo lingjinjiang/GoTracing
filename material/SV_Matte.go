@@ -14,17 +14,15 @@ type SV_Matte struct {
 
 func (sv SV_Matte) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor color.RGBA) color.RGBA {
 	hitPoint := shadeRec.HitPoint
-	x := hitPoint.X
-	// y := hitPoint.Y;
-	z := hitPoint.Z
+
+	objPos := shadeRec.ObjPosition
+	objX := shadeRec.ObjX
+	objZ := shadeRec.ObjZ
+	x := ((hitPoint.X-objPos.X)*objZ.Z - (hitPoint.Z-objPos.Z)*objZ.X) / (objX.X*objZ.Z - objX.Z*objZ.X)
+	z := ((hitPoint.X-objPos.X)*objX.Z - (hitPoint.Z-objPos.Z)*objX.X) / (objZ.X*objX.Z - objX.X*objZ.Z)
 
 	lightColor := shadeRec.Light.GetColor()
 
-	// if (int(math.Floor(x / float64(sv.Size))) + int(math.Floor(y / float64(sv.Size))) + int(math.Floor(z / float64(sv.Size)))) % 2 == 0 {
-	// 	return sv.Color1;
-	// } else {
-	// 	return sv.Color2;
-	// }
 	delta := 0.3
 	if hitLight {
 		delta = 1
