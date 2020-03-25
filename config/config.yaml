@@ -1,0 +1,23 @@
+---
+main:
+  width: 800
+  height: 800
+  output: /home/example.jpg
+  renderThreads: 4
+
+camra:
+  position: 0,0,0
+  sample: 16
+
+objects:
+- name: whitesphere
+  kind: sphere
+  args:
+    center: 0,0,0
+    radius: 50
+    color: 255,255,255
+- name: bottomPlane
+  kind: rect
+  args:
+    position: 1,1,1
+    color: 255,255,255
