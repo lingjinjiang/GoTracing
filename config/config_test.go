@@ -5,7 +5,7 @@ import (
 )
 
 func TestYamlConfig(t *testing.T) {
-	conf := NewYamlConfiguration("config.yaml")
+	conf, _ := NewConfiguration("config.yaml")
 	if conf.Main.Output != "/home/example.jpg" {
 		t.Log(conf.Main.Output)
 		t.Fail()
@@ -30,4 +30,22 @@ func TestYamlConfig(t *testing.T) {
 		t.Log(conf.Objects[1].Args["position"])
 		t.Fail()
 	}
+
+	objList := GenerateObjects(conf)
+
+	if objList.Len() != 1 {
+		t.Log(objList.Len())
+		t.Fail()
+	}
+
+	// obj := objList.Front().Value.(object.Object)
+	// if o, isType := obj.(object.Sphere); isType {
+	// 	if o.Radius() != 50.0 {
+	// 		t.Log(o.Radius())
+	// 		t.Fail()
+	// 	}
+	// } else {
+	// 	t.Log("the type is not sphere")
+	// 	t.Fail()
+	// }
 }

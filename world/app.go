@@ -25,16 +25,16 @@ var (
 )
 
 func Render(s *Scene, config config.Configuration) {
-	log.Println("Rendering", config.Output, "...")
-	file, err := os.Create(config.Output)
+	log.Println("Rendering", config.Main.Output, "...")
+	file, err := os.Create(config.Main.Output)
 	if err != nil {
-		log.Fatal(err, "Unable to create image", config.Output)
+		log.Fatal(err, "Unable to create image", config.Main.Output)
 	}
 	defer file.Close()
 
 	vp := s.VPlane
 	img := image.NewRGBA(image.Rect(0, 0, int(vp.Width), int(vp.Height)))
-	threadCh = make(chan int, config.RenderThreads)
+	threadCh = make(chan int, config.Main.RenderThreads)
 
 	wg.Add(int(vp.Width) * int(vp.Height))
 	beginTime := time.Now()

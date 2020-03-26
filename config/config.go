@@ -1,58 +1,31 @@
 package config
 
 import (
+	"GoTracing/object"
+	"container/list"
 	"io/ioutil"
 	"log"
+	"strconv"
 
-	"github.com/go-ini/ini"
 	"gopkg.in/yaml.v2"
 )
 
-type Configuration struct {
-	Output        string
-	Width         float64
-	Height        float64
-	Sample        int
-	RenderThreads int
-}
+func NewConfiguration(filename string) (Configuration, error) {
+	var conf Configuration = Configuration{}
+	yamlFile, err := ioutil.ReadFile(filename)
 
-func NewConfiguration(filename string) (*Configuration, error) {
-	context, err := ini.Load(filename)
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
+	}
+	err = yaml.Unmarshal(yamlFile, &conf)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	config := Configuration{}
-
-	imageInfo := context.Section("image")
-	if imageInfo != nil {
-		config.Width, err = imageInfo.Key("width").Float64()
-		if err != nil {
-			return nil, err
-		}
-
-		config.Height, err = imageInfo.Key("height").Float64()
-		if err != nil {
-			return nil, err
-		}
-
-		config.Sample, err = imageInfo.Key("sample").Int()
-		if err != nil {
-			return nil, err
-		}
-
-		config.Output = imageInfo.Key("path").String()
-
-		config.RenderThreads, err = imageInfo.Key("renderThreads").Int()
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return &config, nil
+	return conf, nil
 }
 
-type YamlConfiguration struct {
+type Configuration struct {
 	Main    MainConfig   `yaml:"main"`
 	Camra   CamraConfig  `yaml:"camra"`
 	Objects []ObjectInfo `yaml:"objects"`
@@ -76,22 +49,38 @@ type ObjectInfo struct {
 	Args map[string]string `yaml:"args"`
 }
 
-type KeyValue struct {
-	Name  string `yaml:"name"`
-	Value string `yaml:"value"`
+func GenerateObjects(conf Configuration) *list.List {
+	objects := conf.Objects
+	if objects == nil {
+		log.Println("No object is defined in configuration.")
+		return nil
+	}
+
+	objectsInit := newObjectsInitializers()
+
+	objList := list.New()
+	for _, objInfo := range objects {
+		if objectsInit[objInfo.Kind] == nil {
+			continue
+		}
+		obj := objectsInit[objInfo.Kind]()
+		if o, isType := obj.(object.Sphere); isType {
+			if r, err := strconv.ParseFloat(objInfo.Args["radius"], 64); err != nil {
+				o.SetRadius(r)
+			}
+			objList.PushBack(o)
+		}
+	}
+
+	return objList
 }
 
-func NewYamlConfiguration(filename string) YamlConfiguration {
-	var conf YamlConfiguration = YamlConfiguration{}
-	yamlFile, err := ioutil.ReadFile(filename)
+type InitFunc func() object.Object
 
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = yaml.Unmarshal(yamlFile, &conf)
-	if err != nil {
-		log.Fatal(err)
-	}
+func newObjectsInitializers() map[string]InitFunc {
+	objectsInit := map[string]InitFunc{}
 
-	return conf
+	objectsInit["Sphere"] = object.NewConfigSphere
+
+	return objectsInit
 }

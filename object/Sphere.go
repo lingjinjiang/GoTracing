@@ -60,6 +60,10 @@ func (s Sphere) NormalVector(point geo.Point3D) geo.Vector3D {
 	return s.Center().Sub(point).Normalize()
 }
 
+func NewConfigSphere() Object {
+	return Sphere{}
+}
+
 func NewSphere(x float64, y float64, z float64, r float64) *Sphere {
 	sphere := &Sphere{
 		center: geo.Point3D{
@@ -98,4 +102,8 @@ func (s Sphere) GetObjX() geo.Vector3D {
 
 func (s Sphere) GetObjZ() geo.Vector3D {
 	return geo.Vector3D{}
+}
+
+func (s *Sphere) SetRadius(radius float64) {
+	s.radius = radius
 }

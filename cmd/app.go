@@ -40,12 +40,12 @@ func run(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	checkoutOutput(config, outputPath)
+	checkoutOutput(&config, outputPath)
 
 	vp := world.ViewPlane{
-		Width:   config.Width,
-		Height:  config.Height,
-		Samples: config.Sample,
+		Width:   config.Main.Width,
+		Height:  config.Main.Height,
+		Samples: config.Camra.Sample,
 	}
 
 	camera := world.Camera{
@@ -71,13 +71,13 @@ func run(cmd *cobra.Command, args []string) {
 		},
 	}
 
-	world.Build(&scene, *config)
-	world.Render(&scene, *config)
+	world.Build(&scene, config)
+	world.Render(&scene, config)
 }
 
 func checkoutOutput(config *config.Configuration, output string) {
 	if output != "" {
-		config.Output = output
+		config.Main.Output = output
 		log.Println("[Using give output path \"" + outputPath + "\" to override the path in configuration.]")
 	}
 
