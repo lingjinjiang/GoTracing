@@ -2,6 +2,8 @@ package material
 
 import (
 	"GoTracing/material/brdf"
+	"log"
+	"strconv"
 
 	"image/color"
 )
@@ -30,6 +32,48 @@ func NewSpecularPhong(ks float64, exp float64, kd float64, color color.RGBA) Spe
 	}
 
 	return phong
+}
+
+func NewConfigSpecularPhong(args map[string]string) (Material, error) {
+	kd, err := strconv.ParseFloat(args["kd"], 64)
+	if err != nil {
+		log.Fatal("Error when pharse specular phong argments kd:", args["kd"])
+		return nil, err
+	}
+
+	ks, err := strconv.ParseFloat(args["ks"], 64)
+	if err != nil {
+		log.Fatal("Error when pharse specular phong argments ks:", args["ks"])
+		return nil, err
+	}
+
+	exp, err := strconv.ParseFloat(args["exp"], 64)
+	if err != nil {
+		log.Fatal("Error when pharse specular phong argments exp:", args["exp"])
+		return nil, err
+	}
+
+	color, err := ParseColor(args["color"])
+	if err != nil {
+		log.Fatal("Error when pharse specular phong argments color:", args["color"])
+		return nil, err
+	}
+
+	phong := SpecularPhong{
+		ambient: brdf.Lambertian{
+			Kd: kd,
+		},
+		diffuse: brdf.Lambertian{
+			Kd: kd,
+		},
+		specular: brdf.GlossySpecular{
+			Ks:  ks,
+			Exp: exp,
+		},
+		Color: *color,
+	}
+
+	return phong, nil
 }
 
 func (sp SpecularPhong) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor color.RGBA) color.RGBA {

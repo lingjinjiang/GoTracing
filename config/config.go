@@ -1,11 +1,11 @@
 package config
 
 import (
+	"GoTracing/material"
 	"GoTracing/object"
 	"container/list"
 	"io/ioutil"
 	"log"
-	"strconv"
 
 	"gopkg.in/yaml.v2"
 )
@@ -44,7 +44,13 @@ type CamraConfig struct {
 }
 
 type ObjectInfo struct {
-	Name string            `yaml:"name"`
+	Name     string            `yaml:"name"`
+	Kind     string            `yaml:"kind"`
+	Args     map[string]string `yaml:"args"`
+	Material MaterialInfo      `yaml:"material"`
+}
+
+type MaterialInfo struct {
 	Kind string            `yaml:"kind"`
 	Args map[string]string `yaml:"args"`
 }
@@ -57,30 +63,43 @@ func GenerateObjects(conf Configuration) *list.List {
 	}
 
 	objectsInit := newObjectsInitializers()
+	materialInit := newMaterailInitializers()
 
 	objList := list.New()
 	for _, objInfo := range objects {
 		if objectsInit[objInfo.Kind] == nil {
 			continue
 		}
-		obj := objectsInit[objInfo.Kind]()
-		if o, isType := obj.(object.Sphere); isType {
-			if r, err := strconv.ParseFloat(objInfo.Args["radius"], 64); err != nil {
-				o.SetRadius(r)
-			}
-			objList.PushBack(o)
+		material, err := materialInit[objInfo.Material.Kind](objInfo.Material.Args)
+		if err != nil {
+			log.Fatal("Can't parse the object material: ", objInfo.Name, err)
+			continue
 		}
+		obj, err := objectsInit[objInfo.Kind](material, objInfo.Args)
+		if err != nil {
+			log.Fatal("Can't initialize the object: ", objInfo.Name, err)
+			continue
+		}
+		objList.PushBack(obj)
 	}
 
 	return objList
 }
 
-type InitFunc func() object.Object
+type ObjInit func(material material.Material, args map[string]string) (object.Object, error)
 
-func newObjectsInitializers() map[string]InitFunc {
-	objectsInit := map[string]InitFunc{}
+func newObjectsInitializers() map[string]ObjInit {
+	objectsInit := map[string]ObjInit{}
 
 	objectsInit["Sphere"] = object.NewConfigSphere
 
 	return objectsInit
+}
+
+type MaterialInit func(args map[string]string) (material.Material, error)
+
+func newMaterailInitializers() map[string]MaterialInit {
+	materialInit := map[string]MaterialInit{}
+	materialInit["SpecularPhong"] = material.NewConfigSpecularPhong
+	return materialInit
 }

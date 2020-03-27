@@ -3,6 +3,8 @@ package object
 import (
 	geo "GoTracing/geometry"
 	"GoTracing/material"
+	"log"
+	"strconv"
 
 	"math"
 )
@@ -60,8 +62,22 @@ func (s Sphere) NormalVector(point geo.Point3D) geo.Vector3D {
 	return s.Center().Sub(point).Normalize()
 }
 
-func NewConfigSphere() Object {
-	return Sphere{}
+func NewConfigSphere(material material.Material, args map[string]string) (Object, error) {
+	sphere := Sphere{}
+	if r, err := strconv.ParseFloat(args["radius"], 64); err == nil {
+		sphere.SetRadius(r)
+	} else {
+		log.Fatal("The radius is illegal: ", args["radius"])
+		return nil, err
+	}
+	if position, err := geo.ParsePoint(args["center"]); err == nil {
+		sphere.SetCenter(*position)
+	} else {
+		log.Fatal("The postion is illegal: ", args["center"])
+		return nil, err
+	}
+	sphere.SetMaterial(material)
+	return sphere, nil
 }
 
 func NewSphere(x float64, y float64, z float64, r float64) *Sphere {
@@ -78,6 +94,10 @@ func NewSphere(x float64, y float64, z float64, r float64) *Sphere {
 
 func (s Sphere) Center() geo.Point3D {
 	return s.center
+}
+
+func (s *Sphere) SetCenter(center geo.Point3D) {
+	s.center = center
 }
 
 func (s Sphere) Radius() float64 {

@@ -15,9 +15,21 @@ objects:
   args:
     center: 0,0,0
     radius: 50
-    color: 255,255,255
+  material:
+    kind: SpecularPhong
+    args:
+      ks: 0.3
+      kd: 0.5
+      exp: 3
+      color: 255, 255, 255, 255
 - name: bottomPlane
   kind: rect
   args:
     position: 1,1,1
-    color: 255,255,255
+  materail:
+    name: SpecularPhong
+    args:
+      ks: 0.3
+      kd: 0.5
+      exp: 3
+      color: 255, 255, 255, 255
