@@ -50,9 +50,16 @@ func Render(s *Scene, config config.Configuration) {
 	jpeg.Encode(file, img, nil)
 }
 
-func Build(s *Scene, config config.Configuration) {
-	// someSphere(s, config)
-	singleSphere(s, config)
+func Build(s *Scene, conf config.Configuration) {
+	// someSphere(s, conf)
+	//singleSphere(s, conf)
+	objlist := config.GenerateObjects(conf)
+
+	if objlist == nil {
+		return
+	}
+
+	s.ObjList = objlist
 }
 
 func Tracing(x float64, y float64, vp *ViewPlane, s *Scene, img *image.RGBA) {
