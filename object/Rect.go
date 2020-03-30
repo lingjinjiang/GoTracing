@@ -3,7 +3,9 @@ package object
 import (
 	geo "GoTracing/geometry"
 	"GoTracing/material"
+	"log"
 	"math"
+	"strconv"
 )
 
 type Rect struct {
@@ -73,4 +75,52 @@ func (rect Rect) GetObjX() geo.Vector3D {
 
 func (rect Rect) GetObjZ() geo.Vector3D {
 	return rect.WVector
+}
+
+func NewRect(material material.Material, args map[string]string) (Object, error) {
+	rect := Rect{}
+	if position, err := geo.ParsePoint(args["position"]); err == nil {
+		rect.Position = *position
+	} else {
+		log.Fatal("The postion is illegal: ", args["center"])
+		return nil, err
+	}
+
+	if width, err := strconv.ParseFloat(args["width"], 64); err == nil {
+		rect.Width = width
+	} else {
+		log.Fatal("The width is illegal: ", args["width"])
+		return nil, err
+	}
+
+	if length, err := strconv.ParseFloat(args["length"], 64); err == nil {
+		rect.Length = length
+	} else {
+		log.Fatal("The length is illegal: ", args["length"])
+		return nil, err
+	}
+
+	if localX, err := geo.ParseVector(args["localX"]); err == nil {
+		rect.LVector = *localX
+	} else {
+		log.Fatal("The length is illegal: ", args["localX"])
+		return nil, err
+	}
+
+	if localY, err := geo.ParseVector(args["localY"]); err == nil {
+		rect.Normal = *localY
+	} else {
+		log.Fatal("The length is illegal: ", args["localY"])
+		return nil, err
+	}
+
+	if localZ, err := geo.ParseVector(args["localZ"]); err == nil {
+		rect.WVector = *localZ
+	} else {
+		log.Fatal("The length is illegal: ", args["localZ"])
+		return nil, err
+	}
+
+	rect.SetMaterial(material)
+	return rect, nil
 }

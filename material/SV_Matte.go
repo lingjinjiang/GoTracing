@@ -2,7 +2,9 @@ package material
 
 import (
 	"image/color"
+	"log"
 	"math"
+	"strconv"
 )
 
 // simple two color materail for test
@@ -49,4 +51,32 @@ func (sv SV_Matte) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor color.RG
 		G: uint8(float64(shadeColor.G) * delta),
 		B: uint8(float64(shadeColor.B) * delta),
 	}
+}
+
+func NewSVMatte(args map[string]string) (Material, error) {
+	size, err := strconv.Atoi(args["size"])
+	if err != nil {
+		log.Fatal("Error when parseing argment size:", args["size"])
+		return nil, err
+	}
+
+	color1, err := ParseColor(args["color1"])
+	if err != nil {
+		log.Fatal("Error when parseing argment color1:", args["color2"])
+		return nil, err
+	}
+
+	color2, err := ParseColor(args["color2"])
+	if err != nil {
+		log.Fatal("Error when parseing argment color2:", args["color2"])
+		return nil, err
+	}
+
+	matte := SV_Matte{
+		Color1: *color1,
+		Color2: *color2,
+		Size:   size,
+	}
+
+	return matte, nil
 }

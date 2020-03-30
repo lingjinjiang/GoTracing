@@ -70,7 +70,12 @@ func GenerateObjects(conf Configuration) *list.List {
 		if objectsInit[objInfo.Kind] == nil {
 			continue
 		}
-		material, err := materialInit[objInfo.Material.Kind](objInfo.Material.Args)
+		materialInitFunc := materialInit[objInfo.Material.Kind]
+		if materialInitFunc == nil {
+			log.Println("[WARN] Unknown material: ", objInfo.Material.Kind)
+			materialInitFunc = material.NewDefaultMaterial
+		}
+		material, err := materialInitFunc(objInfo.Material.Args)
 		if err != nil {
 			log.Fatal("Can't parse the object material: ", objInfo.Name, err)
 			continue
@@ -91,7 +96,8 @@ type ObjInit func(material material.Material, args map[string]string) (object.Ob
 func newObjectsInitializers() map[string]ObjInit {
 	objectsInit := map[string]ObjInit{}
 
-	objectsInit["Sphere"] = object.NewConfigSphere
+	objectsInit["Sphere"] = object.NewSphere
+	objectsInit["Rect"] = object.NewRect
 
 	return objectsInit
 }
@@ -100,6 +106,9 @@ type MaterialInit func(args map[string]string) (material.Material, error)
 
 func newMaterailInitializers() map[string]MaterialInit {
 	materialInit := map[string]MaterialInit{}
-	materialInit["SpecularPhong"] = material.NewConfigSpecularPhong
+	materialInit["Default"] = material.NewDefaultMaterial
+	materialInit["Phong"] = material.NewPhong
+	materialInit["SpecularPhong"] = material.NewSpecularPhong
+	materialInit["SV_Matte"] = material.NewSVMatte
 	return materialInit
 }

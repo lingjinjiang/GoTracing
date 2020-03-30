@@ -10,11 +10,11 @@ camra:
   sample: 16
 
 objects:
-- name: whitesphere
+- name: WhiteSphere
   kind: Sphere
   args:
-    center: 0,0,0
-    radius: 50
+    center: 0,120,0
+    radius: 120
   material:
     kind: SpecularPhong
     args:
@@ -23,13 +23,17 @@ objects:
       exp: 3
       color: 255, 255, 255, 255
 - name: bottomPlane
-  kind: rect
+  kind: Rect
   args:
-    position: 1,1,1
-  materail:
-    name: SpecularPhong
+    width: 800
+    length: 800
+    position: 0,0,0
+    localX: 1,0,1
+    localY: 0,1,0
+    localZ: -1,0,1
+  material:
+    kind: SV_Matte
     args:
-      ks: 0.3
-      kd: 0.5
-      exp: 3
-      color: 255, 255, 255, 255
+      size: 50
+      color1: 255, 255, 255, 255
+      color2: 0, 0, 0, 255

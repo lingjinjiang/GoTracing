@@ -62,7 +62,7 @@ func (s Sphere) NormalVector(point geo.Point3D) geo.Vector3D {
 	return s.Center().Sub(point).Normalize()
 }
 
-func NewConfigSphere(material material.Material, args map[string]string) (Object, error) {
+func NewSphere(material material.Material, args map[string]string) (Object, error) {
 	sphere := Sphere{}
 	if r, err := strconv.ParseFloat(args["radius"], 64); err == nil {
 		sphere.SetRadius(r)
@@ -78,18 +78,6 @@ func NewConfigSphere(material material.Material, args map[string]string) (Object
 	}
 	sphere.SetMaterial(material)
 	return sphere, nil
-}
-
-func NewSphere(x float64, y float64, z float64, r float64) *Sphere {
-	sphere := &Sphere{
-		center: geo.Point3D{
-			X: x,
-			Y: y,
-			Z: z,
-		},
-		radius: r,
-	}
-	return sphere
 }
 
 func (s Sphere) Center() geo.Point3D {

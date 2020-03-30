@@ -16,25 +16,7 @@ type SpecularPhong struct {
 }
 
 // phong with simple mirror reflection
-func NewSpecularPhong(ks float64, exp float64, kd float64, color color.RGBA) SpecularPhong {
-	phong := SpecularPhong{
-		ambient: brdf.Lambertian{
-			Kd: kd,
-		},
-		diffuse: brdf.Lambertian{
-			Kd: kd,
-		},
-		specular: brdf.GlossySpecular{
-			Ks:  ks,
-			Exp: exp,
-		},
-		Color: color,
-	}
-
-	return phong
-}
-
-func NewConfigSpecularPhong(args map[string]string) (Material, error) {
+func NewSpecularPhong(args map[string]string) (Material, error) {
 	kd, err := strconv.ParseFloat(args["kd"], 64)
 	if err != nil {
 		log.Fatal("Error when pharse specular phong argments kd:", args["kd"])

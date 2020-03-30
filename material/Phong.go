@@ -2,6 +2,8 @@ package material
 
 import (
 	"GoTracing/material/brdf"
+	"log"
+	"strconv"
 
 	"image/color"
 )
@@ -13,7 +15,31 @@ type Phong struct {
 	Color    color.RGBA
 }
 
-func NewPhong(ks float64, exp float64, kd float64, color color.RGBA) Phong {
+func NewPhong(args map[string]string) (Material, error) {
+	kd, err := strconv.ParseFloat(args["kd"], 64)
+	if err != nil {
+		log.Fatal("Error when pharse specular phong argments kd:", args["kd"])
+		return nil, err
+	}
+
+	ks, err := strconv.ParseFloat(args["ks"], 64)
+	if err != nil {
+		log.Fatal("Error when pharse specular phong argments ks:", args["ks"])
+		return nil, err
+	}
+
+	exp, err := strconv.ParseFloat(args["exp"], 64)
+	if err != nil {
+		log.Fatal("Error when pharse specular phong argments exp:", args["exp"])
+		return nil, err
+	}
+
+	color, err := ParseColor(args["color"])
+	if err != nil {
+		log.Fatal("Error when pharse specular phong argments color:", args["color"])
+		return nil, err
+	}
+
 	phong := Phong{
 		ambient: brdf.Lambertian{
 			Kd: kd,
@@ -25,10 +51,10 @@ func NewPhong(ks float64, exp float64, kd float64, color color.RGBA) Phong {
 			Ks:  ks,
 			Exp: exp,
 		},
-		Color: color,
+		Color: *color,
 	}
 
-	return phong
+	return phong, nil
 }
 
 func (p Phong) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor color.RGBA) color.RGBA {
