@@ -3,6 +3,7 @@ package object
 import (
 	geo "GoTracing/geometry"
 	"GoTracing/material"
+	"errors"
 	"log"
 	"math"
 	"strconv"
@@ -87,6 +88,9 @@ func NewRect(material material.Material, args map[string]string) (Object, error)
 	}
 
 	if width, err := strconv.ParseFloat(args["width"], 64); err == nil {
+		if width <= 0.0 {
+			return nil, errors.New("The width should be a positive value" + args["width"])
+		}
 		rect.Width = width
 	} else {
 		log.Fatal("The width is illegal: ", args["width"])
@@ -94,6 +98,9 @@ func NewRect(material material.Material, args map[string]string) (Object, error)
 	}
 
 	if length, err := strconv.ParseFloat(args["length"], 64); err == nil {
+		if length <= 0.0 {
+			return nil, errors.New("The length should be a positive value" + args["length"])
+		}
 		rect.Length = length
 	} else {
 		log.Fatal("The length is illegal: ", args["length"])
@@ -119,6 +126,11 @@ func NewRect(material material.Material, args map[string]string) (Object, error)
 	} else {
 		log.Fatal("The length is illegal: ", args["localZ"])
 		return nil, err
+	}
+
+	// check local coordinate
+	if rect.Normal.Dot(rect.LVector) != 0 || rect.Normal.Dot(rect.WVector) != 0 || rect.WVector.Dot(rect.LVector) != 0 {
+		return nil, errors.New("The local cooridnate is invalied.")
 	}
 
 	rect.SetMaterial(material)

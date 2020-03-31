@@ -3,6 +3,7 @@ package object
 import (
 	geo "GoTracing/geometry"
 	"GoTracing/material"
+	"errors"
 	"log"
 	"strconv"
 
@@ -65,6 +66,9 @@ func (s Sphere) NormalVector(point geo.Point3D) geo.Vector3D {
 func NewSphere(material material.Material, args map[string]string) (Object, error) {
 	sphere := Sphere{}
 	if r, err := strconv.ParseFloat(args["radius"], 64); err == nil {
+		if r <= 0.0 {
+			return nil, errors.New("The radius should be a positive value: " + args["radius"])
+		}
 		sphere.SetRadius(r)
 	} else {
 		log.Fatal("The radius is illegal: ", args["radius"])
@@ -88,7 +92,7 @@ func (s *Sphere) SetCenter(center geo.Point3D) {
 	s.center = center
 }
 
-func (s Sphere) Radius() float64 {
+func (s Sphere) GetRadius() float64 {
 	return s.radius
 }
 
