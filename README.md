@@ -29,6 +29,13 @@ main:
 camra:
   position: 0,0,0
   sample: 16
+lights:
+- name: light1
+  kind: SimplePointLight
+  args:
+    position: 10000000,10000000,10000000
+    color: 255,255,255,255
+    ls: 1.0
 objects:
 - name: WhiteSphere
   kind: Sphere

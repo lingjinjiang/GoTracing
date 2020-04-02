@@ -1,6 +1,7 @@
 package material
 
 import (
+	"GoTracing/util"
 	"image/color"
 	"log"
 	"math"
@@ -60,13 +61,13 @@ func NewSVMatte(args map[string]string) (Material, error) {
 		return nil, err
 	}
 
-	color1, err := ParseColor(args["color1"])
+	color1, err := util.ParseColor(args["color1"])
 	if err != nil {
 		log.Fatal("Error when parseing argment color1:", args["color2"])
 		return nil, err
 	}
 
-	color2, err := ParseColor(args["color2"])
+	color2, err := util.ParseColor(args["color2"])
 	if err != nil {
 		log.Fatal("Error when parseing argment color2:", args["color2"])
 		return nil, err

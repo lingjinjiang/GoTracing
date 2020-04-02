@@ -1,6 +1,7 @@
 package config
 
 import (
+	"GoTracing/light"
 	"GoTracing/material"
 	"GoTracing/object"
 	"container/list"
@@ -29,6 +30,7 @@ type Configuration struct {
 	Main    MainConfig   `yaml:"main"`
 	Camra   CamraConfig  `yaml:"camra"`
 	Objects []ObjectInfo `yaml:"objects"`
+	Lights  []LightInfo  `yaml:"lights"`
 }
 
 type MainConfig struct {
@@ -48,6 +50,12 @@ type ObjectInfo struct {
 	Kind     string            `yaml:"kind"`
 	Args     map[string]string `yaml:"args"`
 	Material MaterialInfo      `yaml:"material"`
+}
+
+type LightInfo struct {
+	Name string            `yaml:"name"`
+	Kind string            `yaml:"kind"`
+	Args map[string]string `yaml:"args"`
 }
 
 type MaterialInfo struct {
@@ -91,6 +99,30 @@ func GenerateObjects(conf Configuration) *list.List {
 	return objList
 }
 
+func GenerateLights(conf Configuration) *list.List {
+	lights := conf.Lights
+	if lights == nil {
+		log.Println("No light is defined in configuration.")
+		return nil
+	}
+
+	lightsInit := newLightInitializers()
+	lightList := list.New()
+	for _, lightInfo := range lights {
+		if lightsInit[lightInfo.Kind] == nil {
+			continue
+		}
+		l, err := lightsInit[lightInfo.Kind](lightInfo.Args)
+		if err != nil {
+			log.Fatal("Can't initialize the light: ", lightInfo.Name, err)
+			continue
+		}
+		lightList.PushBack(l)
+	}
+
+	return lightList
+}
+
 type ObjInit func(material material.Material, args map[string]string) (object.Object, error)
 
 func newObjectsInitializers() map[string]ObjInit {
@@ -111,4 +143,12 @@ func newMaterailInitializers() map[string]MaterialInit {
 	materialInit["SpecularPhong"] = material.NewSpecularPhong
 	materialInit["SV_Matte"] = material.NewSVMatte
 	return materialInit
+}
+
+type LightInit func(args map[string]string) (light.Light, error)
+
+func newLightInitializers() map[string]LightInit {
+	lightInit := map[string]LightInit{}
+	lightInit["SimplePointLight"] = light.NewSimplePointLight
+	return lightInit
 }

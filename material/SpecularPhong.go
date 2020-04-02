@@ -2,6 +2,7 @@ package material
 
 import (
 	"GoTracing/material/brdf"
+	"GoTracing/util"
 	"log"
 	"strconv"
 
@@ -35,7 +36,7 @@ func NewSpecularPhong(args map[string]string) (Material, error) {
 		return nil, err
 	}
 
-	color, err := ParseColor(args["color"])
+	color, err := util.ParseColor(args["color"])
 	if err != nil {
 		log.Fatal("Error when pharse specular phong argments color:", args["color"])
 		return nil, err

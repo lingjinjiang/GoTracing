@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"GoTracing/config"
+	"GoTracing/light"
 	"GoTracing/tracer"
 )
 
@@ -49,12 +50,17 @@ func Render(s *Scene, config config.Configuration) {
 
 func Build(s *Scene, conf config.Configuration) {
 	objlist := config.GenerateObjects(conf)
-
 	if objlist == nil {
 		return
 	}
 
 	s.ObjList = objlist
+
+	lightList := config.GenerateLights(conf)
+	if lightList == nil {
+		return
+	}
+	s.Light = lightList.Back().Value.(light.Light)
 }
 
 func Tracing(x float64, y float64, vp *ViewPlane, s *Scene, img *image.RGBA) {
