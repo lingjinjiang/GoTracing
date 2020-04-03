@@ -14,6 +14,7 @@ type Object interface {
 	GetMaterial() material.Material
 
 	GetPosition() geo.Point3D
-	GetObjX() geo.Vector3D
-	GetObjZ() geo.Vector3D
+	GetLocalX() geo.Vector3D
+	GetLocalY() geo.Vector3D
+	GetLocalZ() geo.Vector3D
 }

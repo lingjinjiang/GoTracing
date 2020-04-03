@@ -43,8 +43,9 @@ func Tracing(objList list.List, light light.Light, ray geo.Ray) material.ShadeRe
 		shadeRec.Ray = ray
 		shadeRec.Light = light
 		shadeRec.ObjPosition = hitObject.GetPosition()
-		shadeRec.ObjX = hitObject.GetObjX()
-		shadeRec.ObjZ = hitObject.GetObjZ()
+		shadeRec.ObjX = hitObject.GetLocalX()
+		shadeRec.ObjY = hitObject.GetLocalY()
+		shadeRec.ObjZ = hitObject.GetLocalZ()
 	} else {
 		shadeRec.IsHit = false
 	}

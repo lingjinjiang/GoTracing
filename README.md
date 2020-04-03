@@ -9,7 +9,7 @@ The purpoes of the project is just for me to learn golang.
 Now GoTracing can render some simple objects. But ray tracing is a complex system, I can't finish it in a short time. So I will make a Todo list.
 
 1. ~~using configuration file to describe scene~~
-2. add local coordinate system for object
+2. ~~add local coordinate system for object~~
 3. rebuild the camra and view plane
 4. enhance the shadow and reflection
 5. multi kinds of color
@@ -42,6 +42,9 @@ objects:
   args:
     center: 0,120,0
     radius: 120
+    localX: 1,0,0
+    localY: 0,1,0
+    localZ: 0,0,1
   material:
     kind: SpecularPhong
     args:

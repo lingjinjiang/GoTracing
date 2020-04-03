@@ -16,5 +16,6 @@ type ShadeRec struct {
 	Light       light.Light
 	ObjPosition geo.Point3D
 	ObjX        geo.Vector3D
+	ObjY        geo.Vector3D
 	ObjZ        geo.Vector3D
 }

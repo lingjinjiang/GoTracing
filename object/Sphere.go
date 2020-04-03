@@ -14,6 +14,9 @@ type Sphere struct {
 	center   geo.Point3D
 	radius   float64
 	material material.Material
+	localX   geo.Vector3D
+	localY   geo.Vector3D
+	localZ   geo.Vector3D
 }
 
 // if the endpoint of the ray is (a, b, c) and direction is (dx, dy, dz)
@@ -80,7 +83,35 @@ func NewSphere(material material.Material, args map[string]string) (Object, erro
 		log.Fatal("The postion is illegal: ", args["center"])
 		return nil, err
 	}
+
+	if localX, err := geo.ParseVector(args["localX"]); err == nil {
+		sphere.localX = *localX
+	} else {
+		log.Fatal("The length is illegal: ", args["localX"])
+		return nil, err
+	}
+
+	if localY, err := geo.ParseVector(args["localY"]); err == nil {
+		sphere.localY = *localY
+	} else {
+		log.Fatal("The length is illegal: ", args["localY"])
+		return nil, err
+	}
+
+	if localZ, err := geo.ParseVector(args["localZ"]); err == nil {
+		sphere.localZ = *localZ
+	} else {
+		log.Fatal("The length is illegal: ", args["localZ"])
+		return nil, err
+	}
+
+	// check local coordinate
+	if sphere.localX.Dot(sphere.localY) != 0 || sphere.localX.Dot(sphere.localZ) != 0 || sphere.localY.Dot(sphere.localZ) != 0 {
+		return nil, errors.New("The local cooridnate is invalied.")
+	}
+
 	sphere.SetMaterial(material)
+
 	return sphere, nil
 }
 
@@ -108,12 +139,16 @@ func (s Sphere) GetPosition() geo.Point3D {
 	return geo.Point3D{}
 }
 
-func (s Sphere) GetObjX() geo.Vector3D {
-	return geo.Vector3D{}
+func (s Sphere) GetLocalX() geo.Vector3D {
+	return s.localX
 }
 
-func (s Sphere) GetObjZ() geo.Vector3D {
-	return geo.Vector3D{}
+func (s Sphere) GetLocalY() geo.Vector3D {
+	return s.localY
+}
+
+func (s Sphere) GetLocalZ() geo.Vector3D {
+	return s.localZ
 }
 
 func (s *Sphere) SetRadius(radius float64) {

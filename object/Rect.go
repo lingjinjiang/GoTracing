@@ -70,11 +70,15 @@ func (rect Rect) GetPosition() geo.Point3D {
 	return rect.Position
 }
 
-func (rect Rect) GetObjX() geo.Vector3D {
+func (rect Rect) GetLocalX() geo.Vector3D {
 	return rect.LVector
 }
 
-func (rect Rect) GetObjZ() geo.Vector3D {
+func (rect Rect) GetLocalY() geo.Vector3D {
+	return rect.Normal
+}
+
+func (rect Rect) GetLocalZ() geo.Vector3D {
 	return rect.WVector
 }
 

@@ -20,6 +20,9 @@ objects:
   args:
     center: 0,120,0
     radius: 120
+    localX: 1,0,0
+    localY: 0,1,0
+    localZ: 0,0,1
   material:
     kind: SpecularPhong
     args:
