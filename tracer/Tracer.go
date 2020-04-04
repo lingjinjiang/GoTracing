@@ -77,11 +77,11 @@ func GetColor(shadeRec material.ShadeRec, objList list.List, light light.Light) 
 			Direction: diffuseIn,
 		}
 		diffuseShadeRec := Tracing(objList, light, diffuseRay)
-		diffuseShadeRec.VIn = lightIn
+		diffuseShadeRec.VIn = light.GetDirection(diffuseShadeRec.HitPoint).Normalize()
 		diffuseShadeRec.VOut = diffuseIn
 		var diffuseColor color.RGBA
 		if diffuseShadeRec.IsHit {
-			diffuseColor = diffuseShadeRec.Material.Shade(diffuseShadeRec, true, BACKGOUND)
+			diffuseColor = diffuseShadeRec.Material.Shade(diffuseShadeRec, diffuseShadeRec.IsHit, BACKGOUND)
 		} else {
 			diffuseColor = BACKGOUND
 		}

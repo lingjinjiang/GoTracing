@@ -4,6 +4,7 @@ import (
 	"GoTracing/material/brdf"
 	"GoTracing/util"
 	"log"
+	"math"
 	"strconv"
 
 	"image/color"
@@ -73,43 +74,41 @@ func (sp SpecularPhong) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor col
 	reflectA := float64(ambientColor.A) * sp.ambient.Rho() * normal.Dot(vOut)
 
 	if hitLight {
-		reflectR = reflectR + (sp.diffuse.F(hitPoint, normal, vOut, vIn)+sp.specular.F(hitPoint, normal, vOut, vIn))*float64(lightColor.R)
-		reflectG = reflectG + (sp.diffuse.F(hitPoint, normal, vOut, vIn)+sp.specular.F(hitPoint, normal, vOut, vIn))*float64(lightColor.G)
-		reflectB = reflectB + (sp.diffuse.F(hitPoint, normal, vOut, vIn)+sp.specular.F(hitPoint, normal, vOut, vIn))*float64(lightColor.B)
-		reflectA = reflectA + (sp.diffuse.F(hitPoint, normal, vOut, vIn)+sp.specular.F(hitPoint, normal, vOut, vIn))*float64(lightColor.A)
+		reflectR = reflectR + sp.specular.F(hitPoint, normal, vOut, vIn)*float64(lightColor.R)
+		reflectG = reflectG + sp.specular.F(hitPoint, normal, vOut, vIn)*float64(lightColor.G)
+		reflectB = reflectB + sp.specular.F(hitPoint, normal, vOut, vIn)*float64(lightColor.B)
+		reflectA = reflectA + sp.specular.F(hitPoint, normal, vOut, vIn)*float64(lightColor.A)
 	}
-
-	reflectR = FixRGBA(float64(sp.Color.R) * reflectR / 255)
-	reflectG = FixRGBA(float64(sp.Color.G) * reflectG / 255)
-	reflectB = FixRGBA(float64(sp.Color.B) * reflectB / 255)
-	reflectA = FixRGBA(float64(sp.Color.A) * reflectB / 255)
 
 	diffuse := sp.diffuse.F(hitPoint, normal, vOut, vIn) * normal.Dot(vOut)
 
-	finalR := reflectR + float64(diffuseColor.R)*diffuse
-	if finalR > 255 {
-		finalR = 255
+	reflectR = reflectR + float64(diffuseColor.R)*diffuse
+
+	reflectG = reflectG + float64(diffuseColor.G)*diffuse
+
+	reflectB = reflectB + float64(diffuseColor.B)*diffuse
+
+	max := math.Max(reflectR, math.Max(reflectG, reflectB))
+	if max > 255 {
+		reflectR = reflectR / max
+		reflectG = reflectG / max
+		reflectB = reflectB / max
 	}
 
-	finalG := reflectG + float64(diffuseColor.G)*diffuse
-	if finalG > 255 {
-		finalG = 255
+	reflectA = reflectA + float64(diffuseColor.A)*diffuse
+	if reflectA > 255 {
+		reflectA = 255
 	}
 
-	finalB := reflectB + float64(diffuseColor.B)*diffuse
-	if finalB > 255 {
-		finalB = 255
-	}
+	finalR := float64(sp.Color.R) * reflectR / 255
+	finalG := float64(sp.Color.G) * reflectG / 255
+	finalB := float64(sp.Color.B) * reflectB / 255
+	finalA := float64(sp.Color.A) * reflectA / 255
 
-	finalA := reflectA + float64(diffuseColor.A)*diffuse
-	if finalA > 255 {
-		finalA = 255
-	}
 	return color.RGBA{
 		R: uint8(finalR),
 		G: uint8(finalG),
 		B: uint8(finalB),
 		A: uint8(finalA),
 	}
-	// return diffuseColor
 }
