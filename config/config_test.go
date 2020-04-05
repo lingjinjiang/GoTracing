@@ -11,8 +11,8 @@ func TestYamlConfig(t *testing.T) {
 		t.Fail()
 	}
 
-	if conf.Camra.Sample != 16 {
-		t.Log(conf.Camra.Sample)
+	if conf.Camera.VPlane.Sample != "16" {
+		t.Log(conf.Camera.VPlane.Sample)
 		t.Fail()
 	}
 

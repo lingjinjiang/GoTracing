@@ -5,7 +5,6 @@ import (
 	"GoTracing/world"
 	"log"
 
-	geo "GoTracing/geometry"
 	"container/list"
 
 	"github.com/spf13/cobra"
@@ -40,23 +39,14 @@ func run(cmd *cobra.Command, args []string) {
 
 	checkoutOutput(&config, outputPath)
 
-	vp := world.ViewPlane{
-		Width:   config.Main.Width,
-		Height:  config.Main.Height,
-		Samples: config.Camra.Sample,
-	}
-
-	camera := world.Camera{
-		U:        geo.Vector3D{X: 1.0, Y: 0.0, Z: 0.0}.Normalize(),
-		V:        geo.Vector3D{X: 0.0, Y: 2.0, Z: -1.0}.Normalize(),
-		W:        geo.Vector3D{X: 0.0, Y: 1.0, Z: 2.0}.Normalize(),
-		Distance: 900.0,
-		Position: geo.Point3D{X: 0, Y: 500, Z: 1000},
+	camera, err := world.NewCamera(config.Camera)
+	if err != nil {
+		log.Fatal("Build camera failed.", err)
+		return
 	}
 
 	scene := world.Scene{
 		ObjList:   list.New(),
-		VPlane:    &vp,
 		ViewPoint: camera,
 	}
 

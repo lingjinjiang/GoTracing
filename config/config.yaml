@@ -1,12 +1,19 @@
 ---
 main:
-  width: 800
-  height: 800
+  width: 1280
+  height: 720
   output: /home/example.jpg
   renderThreads: 4
 camra:
-  position: 0,0,0
-  sample: 16
+  position: 0,500,1000
+  distance: 900
+  u: 1,0,0
+  v: 0,2,-1
+  w: 0,1,2
+  viewplane:
+    width: 1280
+    height: 720
+    sample: 16
 lights:
 - name: light1
   kind: SimplePointLight

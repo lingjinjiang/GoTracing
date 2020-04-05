@@ -30,7 +30,7 @@ func Render(s *Scene, config config.Configuration) {
 	}
 	defer file.Close()
 
-	vp := s.VPlane
+	vp := s.ViewPoint.VPlane
 	img := image.NewRGBA(image.Rect(0, 0, int(vp.Width), int(vp.Height)))
 	threadCh = make(chan int, config.Main.RenderThreads)
 
@@ -63,7 +63,7 @@ func Build(s *Scene, conf config.Configuration) {
 	s.Light = lightList.Back().Value.(light.Light)
 }
 
-func Tracing(x float64, y float64, vp *ViewPlane, s *Scene, img *image.RGBA) {
+func Tracing(x float64, y float64, vp ViewPlane, s *Scene, img *image.RGBA) {
 	defer wg.Done()
 	numSamples := vp.Samples
 	n := int(math.Sqrt(float64(numSamples)))

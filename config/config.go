@@ -28,7 +28,7 @@ func NewConfiguration(filename string) (Configuration, error) {
 
 type Configuration struct {
 	Main    MainConfig   `yaml:"main"`
-	Camra   CamraConfig  `yaml:"camra"`
+	Camera  CameraInfo   `yaml:"camra"`
 	Objects []ObjectInfo `yaml:"objects"`
 	Lights  []LightInfo  `yaml:"lights"`
 }
@@ -40,9 +40,13 @@ type MainConfig struct {
 	RenderThreads int     `yaml:"renderThreads"`
 }
 
-type CamraConfig struct {
-	Positsion string `yaml:"position"`
-	Sample    int    `yaml:"sample"`
+type CameraInfo struct {
+	U        string        `yaml:"u"`
+	V        string        `yaml:"v"`
+	W        string        `yaml:"w"`
+	Position string        `yaml:"position"`
+	Distance string        `yaml:"distance"`
+	VPlane   ViewPlaneInfo `yaml:"viewplane"`
 }
 
 type ObjectInfo struct {
@@ -61,6 +65,12 @@ type LightInfo struct {
 type MaterialInfo struct {
 	Kind string            `yaml:"kind"`
 	Args map[string]string `yaml:"args"`
+}
+
+type ViewPlaneInfo struct {
+	Width  string `yaml:"width"`
+	Height string `yaml:"height"`
+	Sample string `yaml:"sample"`
 }
 
 func GenerateObjects(conf Configuration) *list.List {

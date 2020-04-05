@@ -8,7 +8,6 @@ import (
 
 type Scene struct {
 	ViewPoint Camera
-	VPlane    *ViewPlane
 	Height    int
 	Width     int
 	Sphere    *obj.Sphere
