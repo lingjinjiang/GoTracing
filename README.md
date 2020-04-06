@@ -10,7 +10,7 @@ Now GoTracing can render some simple objects. But ray tracing is a complex syste
 
 1. ~~using configuration file to describe scene~~
 2. ~~add local coordinate system for object~~
-3. rebuild the camra and view plane
+3. ~~rebuild the camra and view plane~~
 4. enhance the shadow and reflection
 5. multi kinds of lights
 6. and so on

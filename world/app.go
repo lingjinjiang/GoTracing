@@ -10,6 +10,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/nfnt/resize"
+
 	"GoTracing/config"
 	"GoTracing/light"
 	"GoTracing/tracer"
@@ -45,7 +47,9 @@ func Render(s *Scene, config config.Configuration) {
 	wg.Wait()
 	finishTime := time.Now()
 	log.Println("Using", finishTime.Second()-beginTime.Second(), "seconds")
-	jpeg.Encode(file, img, nil)
+	// using main config to build image, using view plane to tracing
+	output := resize.Resize(uint(config.Main.Width), uint(config.Main.Height), img, resize.Lanczos3)
+	jpeg.Encode(file, output, nil)
 }
 
 func Build(s *Scene, conf config.Configuration) {
