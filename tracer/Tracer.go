@@ -71,7 +71,12 @@ func GetColor(shadeRec material.ShadeRec, objList list.List, light light.Light) 
 		lightShadeRec := Tracing(objList, light, lcoalRay)
 
 		// simple diffuse
-		diffuseIn := localNormal.Add(shadeRec.Ray.Direction.Normalize())
+		rayDirect := shadeRec.Ray.Direction.Normalize()
+		diffuseIn := geo.Vector3D{
+			X: rayDirect.X - 2*rayDirect.Dot(localNormal)*localNormal.X,
+			Y: rayDirect.Y - 2*rayDirect.Dot(localNormal)*localNormal.Y,
+			Z: rayDirect.Z - 2*rayDirect.Dot(localNormal)*localNormal.Z,
+		}
 		diffuseRay := geo.Ray{
 			Endpoint:  shadeRec.HitPoint,
 			Direction: diffuseIn,

@@ -55,7 +55,7 @@ func (rect Rect) NormalVector(point geo.Point3D) geo.Vector3D {
 		X: rect.LVector.Y*rect.WVector.Z - rect.WVector.Y*rect.LVector.Z,
 		Y: rect.LVector.Z*rect.WVector.X - rect.LVector.X*rect.WVector.Z,
 		Z: rect.LVector.X*rect.WVector.Y - rect.LVector.Y*rect.WVector.X,
-	}
+	}.Normalize()
 }
 
 func (rect *Rect) SetMaterial(material material.Material) {
