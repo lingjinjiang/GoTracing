@@ -84,21 +84,21 @@ func NewSphere(material material.Material, args map[string]string) (Object, erro
 		return nil, err
 	}
 
-	if localX, err := geo.ParseVector(args["localX"]); err == nil {
+	if localX, err := geo.ParseNormalVector(args["localX"]); err == nil {
 		sphere.localX = *localX
 	} else {
 		log.Fatal("The length is illegal: ", args["localX"])
 		return nil, err
 	}
 
-	if localY, err := geo.ParseVector(args["localY"]); err == nil {
+	if localY, err := geo.ParseNormalVector(args["localY"]); err == nil {
 		sphere.localY = *localY
 	} else {
 		log.Fatal("The length is illegal: ", args["localY"])
 		return nil, err
 	}
 
-	if localZ, err := geo.ParseVector(args["localZ"]); err == nil {
+	if localZ, err := geo.ParseNormalVector(args["localZ"]); err == nil {
 		sphere.localZ = *localZ
 	} else {
 		log.Fatal("The length is illegal: ", args["localZ"])

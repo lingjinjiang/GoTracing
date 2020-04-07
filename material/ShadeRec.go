@@ -18,4 +18,5 @@ type ShadeRec struct {
 	ObjX        geo.Vector3D
 	ObjY        geo.Vector3D
 	ObjZ        geo.Vector3D
+	Depth       uint // times for tracing
 }

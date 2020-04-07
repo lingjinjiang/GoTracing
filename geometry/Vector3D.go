@@ -88,3 +88,12 @@ func ParseVector(vectorStr string) (*Vector3D, error) {
 
 	return &vector, nil
 }
+
+func ParseNormalVector(vectorStr string) (*Vector3D, error) {
+	v, err := ParseVector(vectorStr)
+	if err != nil {
+		return nil, err
+	}
+	nv := v.Normalize()
+	return &nv, nil
+}

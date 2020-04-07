@@ -111,21 +111,21 @@ func NewRect(material material.Material, args map[string]string) (Object, error)
 		return nil, err
 	}
 
-	if localX, err := geo.ParseVector(args["localX"]); err == nil {
+	if localX, err := geo.ParseNormalVector(args["localX"]); err == nil {
 		rect.LVector = *localX
 	} else {
 		log.Fatal("The length is illegal: ", args["localX"])
 		return nil, err
 	}
 
-	if localY, err := geo.ParseVector(args["localY"]); err == nil {
+	if localY, err := geo.ParseNormalVector(args["localY"]); err == nil {
 		rect.Normal = *localY
 	} else {
 		log.Fatal("The length is illegal: ", args["localY"])
 		return nil, err
 	}
 
-	if localZ, err := geo.ParseVector(args["localZ"]); err == nil {
+	if localZ, err := geo.ParseNormalVector(args["localZ"]); err == nil {
 		rect.WVector = *localZ
 	} else {
 		log.Fatal("The length is illegal: ", args["localZ"])

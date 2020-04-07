@@ -33,22 +33,22 @@ func (c Camera) GetRay(x float64, y float64) *geo.Ray {
 func NewCamera(cameraInfo config.CameraInfo) (Camera, error) {
 	camera := Camera{}
 
-	if u, err := geo.ParseVector(cameraInfo.U); err == nil {
-		camera.U = u.Normalize()
+	if u, err := geo.ParseNormalVector(cameraInfo.U); err == nil {
+		camera.U = *u
 	} else {
 		log.Fatal("The u vector is illegal: ", cameraInfo.U)
 		return camera, err
 	}
 
-	if v, err := geo.ParseVector(cameraInfo.V); err == nil {
-		camera.V = v.Normalize()
+	if v, err := geo.ParseNormalVector(cameraInfo.V); err == nil {
+		camera.V = *v
 	} else {
 		log.Fatal("The v vector is illegal: ", cameraInfo.V)
 		return camera, err
 	}
 
-	if w, err := geo.ParseVector(cameraInfo.W); err == nil {
-		camera.W = w.Normalize()
+	if w, err := geo.ParseNormalVector(cameraInfo.W); err == nil {
+		camera.W = *w
 	} else {
 		log.Fatal("The w vector is illegal: ", cameraInfo.W)
 		return camera, err
