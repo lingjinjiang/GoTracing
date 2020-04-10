@@ -9,8 +9,6 @@ import (
 	"image/color"
 )
 
-var BACKGOUND color.RGBA = color.RGBA{20, 20, 20, 255}
-
 // tracing the ray and return the shade info of this ray
 func Tracing(objList list.List, light light.Light, ray geo.Ray) material.ShadeRec {
 	var min float64 = -1.0
