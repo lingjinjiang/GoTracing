@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"GoTracing/config"
+	"GoTracing/tracer"
 	"GoTracing/world"
 	"log"
 
@@ -48,6 +49,7 @@ func run(cmd *cobra.Command, args []string) {
 	scene := world.Scene{
 		ObjList:   list.New(),
 		ViewPoint: camera,
+		Tracer:    tracer.NewSimpleTracer(config),
 	}
 
 	world.Build(&scene, config)

@@ -14,7 +14,6 @@ import (
 
 	"GoTracing/config"
 	"GoTracing/light"
-	"GoTracing/tracer"
 )
 
 const INT_MAX = ^int(0)
@@ -80,9 +79,9 @@ func Tracing(x float64, y float64, vp ViewPlane, s *Scene, img *image.RGBA) {
 			lcoalY := float64(vp.Height)*0.5 - float64(y) + (float64(q)+0.5)/float64(n)
 			ray := s.ViewPoint.GetRay(lcoalX, lcoalY)
 
-			shadeRec := tracer.Tracing(*s.ObjList, s.Light, *ray)
+			shadeRec := s.Tracer.Tracing(*s.ObjList, s.Light, *ray)
 
-			localColor := tracer.GetColor(shadeRec, *s.ObjList, s.Light)
+			localColor := s.Tracer.GetColor(shadeRec, *s.ObjList, s.Light)
 
 			r += int(localColor.R)
 			g += int(localColor.G)

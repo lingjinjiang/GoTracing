@@ -1,6 +1,7 @@
 package tracer
 
 import (
+	"GoTracing/config"
 	geo "GoTracing/geometry"
 	"GoTracing/light"
 	"GoTracing/material"
@@ -9,8 +10,10 @@ import (
 	"image/color"
 )
 
+type SimpleTracer struct{}
+
 // tracing the ray and return the shade info of this ray
-func Tracing(objList list.List, light light.Light, ray geo.Ray) material.ShadeRec {
+func (t SimpleTracer) Tracing(objList list.List, light light.Light, ray geo.Ray) material.ShadeRec {
 	var min float64 = -1.0
 	var isHit bool = false
 	var hitPoint geo.Point3D
@@ -51,7 +54,7 @@ func Tracing(objList list.List, light light.Light, ray geo.Ray) material.ShadeRe
 }
 
 // get the color of ray
-func GetColor(shadeRec material.ShadeRec, objList list.List, light light.Light) color.RGBA {
+func (t SimpleTracer) GetColor(shadeRec material.ShadeRec, objList list.List, light light.Light) color.RGBA {
 	if shadeRec.IsHit {
 		localNormal := shadeRec.Normal
 		shadeRec.VOut = shadeRec.Ray.Direction.Opposite()
@@ -66,7 +69,7 @@ func GetColor(shadeRec material.ShadeRec, objList list.List, light light.Light) 
 		}
 
 		// simple shadow, if the ray from object hit point to light hit some other objects, then the point is in shadow
-		lightShadeRec := Tracing(objList, light, lcoalRay)
+		lightShadeRec := t.Tracing(objList, light, lcoalRay)
 
 		// simple diffuse
 		rayDirect := shadeRec.Ray.Direction.Normalize()
@@ -79,7 +82,7 @@ func GetColor(shadeRec material.ShadeRec, objList list.List, light light.Light) 
 			Endpoint:  shadeRec.HitPoint,
 			Direction: diffuseIn,
 		}
-		diffuseShadeRec := Tracing(objList, light, diffuseRay)
+		diffuseShadeRec := t.Tracing(objList, light, diffuseRay)
 		diffuseShadeRec.VIn = light.GetDirection(diffuseShadeRec.HitPoint).Normalize()
 		diffuseShadeRec.VOut = diffuseIn
 		var diffuseColor color.RGBA
@@ -93,4 +96,8 @@ func GetColor(shadeRec material.ShadeRec, objList list.List, light light.Light) 
 	} else {
 		return BACKGOUND
 	}
+}
+
+func NewSimpleTracer(conf config.Configuration) SimpleTracer {
+	return SimpleTracer{}
 }
