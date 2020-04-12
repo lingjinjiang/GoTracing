@@ -21,12 +21,13 @@ GoTracing can use configuration file to build scene. Here given a example file. 
 
 ```yaml
 ---
----
 main:
   width: 1280
   height: 720
   output: /home/example.jpg
   renderThreads: 4
+tracer:
+  kind: SimpleTracer
 camra:
   position: 0,500,1000
   distance: 900

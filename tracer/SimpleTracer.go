@@ -1,7 +1,6 @@
 package tracer
 
 import (
-	"GoTracing/config"
 	geo "GoTracing/geometry"
 	"GoTracing/light"
 	"GoTracing/material"
@@ -98,6 +97,6 @@ func (t SimpleTracer) GetColor(shadeRec material.ShadeRec, objList list.List, li
 	}
 }
 
-func NewSimpleTracer(conf config.Configuration) SimpleTracer {
+func NewSimpleTracer() Tracer {
 	return SimpleTracer{}
 }

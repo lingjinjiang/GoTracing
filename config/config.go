@@ -4,6 +4,7 @@ import (
 	"GoTracing/light"
 	"GoTracing/material"
 	"GoTracing/object"
+	"GoTracing/tracer"
 	"container/list"
 	"io/ioutil"
 	"log"
@@ -31,6 +32,7 @@ type Configuration struct {
 	Camera  CameraInfo   `yaml:"camra"`
 	Objects []ObjectInfo `yaml:"objects"`
 	Lights  []LightInfo  `yaml:"lights"`
+	Tracer  TracerInfo   `yaml:"tracer"`
 }
 
 type MainConfig struct {
@@ -71,6 +73,10 @@ type ViewPlaneInfo struct {
 	Width  string `yaml:"width"`
 	Height string `yaml:"height"`
 	Sample string `yaml:"sample"`
+}
+
+type TracerInfo struct {
+	Kind string `yaml:"kind"`
 }
 
 func GenerateObjects(conf Configuration) *list.List {
@@ -161,4 +167,24 @@ func newLightInitializers() map[string]LightInit {
 	lightInit := map[string]LightInit{}
 	lightInit["SimplePointLight"] = light.NewSimplePointLight
 	return lightInit
+}
+
+type TracerInit func() tracer.Tracer
+
+func newTracerInitializers() map[string]TracerInit {
+	tracerInit := map[string]TracerInit{}
+	tracerInit["SimpleTracer"] = tracer.NewSimpleTracer
+	tracerInit["Whitted"] = tracer.NewWhitted
+	return tracerInit
+}
+
+func GenerateTracer(conf Configuration) tracer.Tracer {
+	tracerInfo := conf.Tracer
+	tracerInits := newTracerInitializers()
+	t := tracerInits[tracerInfo.Kind]
+	if t == nil {
+		log.Fatal("Unknown tracer config")
+	}
+
+	return t()
 }

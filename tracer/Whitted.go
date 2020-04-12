@@ -1,7 +1,6 @@
 package tracer
 
 import (
-	"GoTracing/config"
 	geo "GoTracing/geometry"
 	"GoTracing/light"
 	"GoTracing/material"
@@ -21,6 +20,6 @@ func (t Whitted) GetColor(shadeRec material.ShadeRec, objList list.List, light l
 	return color.RGBA{}
 }
 
-func NewWhitted(conf config.Configuration) Tracer {
+func NewWhitted() Tracer {
 	return Whitted{}
 }

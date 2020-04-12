@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"GoTracing/config"
-	"GoTracing/tracer"
 	"GoTracing/world"
 	"log"
 
@@ -32,28 +31,34 @@ func NewGoTracingCommand() *cobra.Command {
 
 func run(cmd *cobra.Command, args []string) {
 
-	config, err := config.NewConfiguration(configFile)
+	conf, err := config.NewConfiguration(configFile)
 	if err != nil {
 		log.Fatal("Unable to load configuration file", configFile)
 		return
 	}
 
-	checkoutOutput(&config, outputPath)
+	checkoutOutput(&conf, outputPath)
 
-	camera, err := world.NewCamera(config.Camera)
+	camera, err := world.NewCamera(conf.Camera)
 	if err != nil {
 		log.Fatal("Build camera failed.", err)
+		return
+	}
+
+	tracer := config.GenerateTracer(conf)
+	if tracer == nil {
+		log.Fatal("Build tracer failed.")
 		return
 	}
 
 	scene := world.Scene{
 		ObjList:   list.New(),
 		ViewPoint: camera,
-		Tracer:    tracer.NewSimpleTracer(config),
+		Tracer:    tracer,
 	}
 
-	world.Build(&scene, config)
-	world.Render(&scene, config)
+	world.Build(&scene, conf)
+	world.Render(&scene, conf)
 }
 
 func checkoutOutput(config *config.Configuration, output string) {
