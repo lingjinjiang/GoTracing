@@ -23,3 +23,7 @@ func (t Whitted) GetColor(shadeRec material.ShadeRec, objList list.List, light l
 func NewWhitted() Tracer {
 	return Whitted{}
 }
+
+func (t Whitted) Tracing2(objList list.List, shadeRec *material.ShadeRec) color.RGBA {
+	return BACKGROUND
+}

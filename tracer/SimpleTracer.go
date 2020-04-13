@@ -86,17 +86,71 @@ func (t SimpleTracer) GetColor(shadeRec material.ShadeRec, objList list.List, li
 		diffuseShadeRec.VOut = diffuseIn
 		var diffuseColor color.RGBA
 		if diffuseShadeRec.IsHit {
-			diffuseColor = diffuseShadeRec.Material.Shade(diffuseShadeRec, diffuseShadeRec.IsHit, BACKGOUND)
+			diffuseColor = diffuseShadeRec.Material.Shade(diffuseShadeRec, diffuseShadeRec.IsHit, BACKGROUND)
 		} else {
-			diffuseColor = BACKGOUND
+			diffuseColor = BACKGROUND
 		}
 
 		return shadeRec.Material.Shade(shadeRec, !lightShadeRec.IsHit, diffuseColor)
 	} else {
-		return BACKGOUND
+		return BACKGROUND
 	}
 }
 
 func NewSimpleTracer() Tracer {
 	return SimpleTracer{}
+}
+
+func (t SimpleTracer) Tracing2(objList list.List, shadeRec *material.ShadeRec) color.RGBA {
+	var min float64 = -1.0
+	var isHit bool = false
+	var hitPoint geo.Point3D
+	var hitObject obj.Object = nil
+	ray := shadeRec.Ray
+	light := shadeRec.Light
+	// if the ray hit multi objects, so return the nearest one
+	for i := objList.Front(); i != nil; i = i.Next() {
+		obj := i.Value.(obj.Object)
+		currentHit, currentHitPoint := obj.Hit(ray)
+		distance := ray.Endpoint.Sub(currentHitPoint).Length()
+		if currentHit {
+			isHit = true
+			if min == -1.0 || (distance < min && distance > 0) {
+				min = distance
+				hitPoint = currentHitPoint
+				hitObject = obj
+			}
+		}
+	}
+
+	var color color.RGBA
+	if isHit {
+		shadeRec.IsHit = true
+		shadeRec.Material = hitObject.GetMaterial()
+		shadeRec.HitPoint = hitPoint
+		shadeRec.Normal = hitObject.NormalVector(hitPoint)
+		shadeRec.ObjPosition = hitObject.GetPosition()
+		shadeRec.ObjX = hitObject.GetLocalX()
+		shadeRec.ObjY = hitObject.GetLocalY()
+		shadeRec.ObjZ = hitObject.GetLocalZ()
+		shadeRec.VOut = shadeRec.Ray.Direction.Opposite()
+		lightIn := light.GetDirection(shadeRec.HitPoint).Normalize()
+		shadeRec.VIn = lightIn
+		lightShadeRec := material.ShadeRec{
+			IsHit: false,
+			Light: shadeRec.Light,
+			Ray: geo.Ray{
+				Endpoint:  shadeRec.HitPoint,
+				Direction: lightIn,
+			},
+		}
+		t.Tracing2(objList, &lightShadeRec)
+
+		color = shadeRec.Material.Shade(*shadeRec, !lightShadeRec.IsHit, BACKGROUND)
+	} else {
+		shadeRec.IsHit = false
+		color = BACKGROUND
+	}
+
+	return color
 }

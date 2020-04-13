@@ -79,8 +79,13 @@ func Tracing(x float64, y float64, vp ViewPlane, s *Scene, img *image.RGBA) {
 			lcoalY := float64(vp.Height)*0.5 - float64(y) + (float64(q)+0.5)/float64(n)
 			ray := s.ViewPoint.GetRay(lcoalX, lcoalY)
 
-			shadeRec := s.Tracer.Tracing(*s.ObjList, s.Light, *ray)
+			// shadeRec := material.ShadeRec{
+			// 	Light: s.Light,
+			// 	Ray:   *ray,
+			// }
+			// localColor := s.Tracer.Tracing2(*s.ObjList, &shadeRec)
 
+			shadeRec := s.Tracer.Tracing(*s.ObjList, s.Light, *ray)
 			localColor := s.Tracer.GetColor(shadeRec, *s.ObjList, s.Light)
 
 			r += int(localColor.R)
