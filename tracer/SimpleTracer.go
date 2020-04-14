@@ -154,3 +154,7 @@ func (t SimpleTracer) Tracing2(objList list.List, shadeRec *material.ShadeRec) c
 
 	return color
 }
+
+func (t SimpleTracer) GetMaxDepth() uint {
+	return 1
+}
