@@ -81,3 +81,7 @@ func NewSVMatte(args map[string]string) (Material, error) {
 
 	return matte, nil
 }
+
+func (sv SV_Matte) IsSpecular() (bool, float64) {
+	return false, 0
+}

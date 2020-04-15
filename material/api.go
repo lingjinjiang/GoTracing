@@ -8,6 +8,7 @@ import (
 type Material interface {
 	// return the color of material with lights
 	Shade(shadeRec ShadeRec, hitLight bool, diffuseColor color.RGBA) color.RGBA
+	IsSpecular() (bool, float64)
 }
 
 func FixRGBA(value float64) float64 {
@@ -25,7 +26,7 @@ func FixColor(color1 color.RGBA, color2 color.RGBA) color.RGBA {
 
 	max := math.Max(r, math.Max(g, b))
 
-	if max > 255 {
+	if max > 255.0 {
 		r = r / max
 		g = g / max
 		b = b / max

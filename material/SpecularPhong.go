@@ -15,6 +15,7 @@ type SpecularPhong struct {
 	diffuse  brdf.BRDF
 	specular brdf.GlossySpecular
 	Color    color.RGBA
+	fr       float64
 }
 
 // phong with simple mirror reflection
@@ -111,4 +112,8 @@ func (sp SpecularPhong) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor col
 		B: uint8(finalB),
 		A: uint8(finalA),
 	}
+}
+
+func (p SpecularPhong) IsSpecular() (bool, float64) {
+	return true, 0.2
 }

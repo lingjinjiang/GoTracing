@@ -12,3 +12,7 @@ func (d Default) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor color.RGBA
 func NewDefaultMaterial(args map[string]string) (Material, error) {
 	return Default{}, nil
 }
+
+func (d Default) IsSpecular() (bool, float64) {
+	return false, 0
+}
