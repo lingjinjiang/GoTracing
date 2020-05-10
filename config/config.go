@@ -79,7 +79,7 @@ type TracerInfo struct {
 	Kind string `yaml:"kind"`
 }
 
-func GenerateObjects(conf Configuration) *list.List {
+func GenerateObjects(conf Configuration, tracer tracer.Tracer) *list.List {
 	objects := conf.Objects
 	if objects == nil {
 		log.Println("No object is defined in configuration.")
@@ -104,6 +104,7 @@ func GenerateObjects(conf Configuration) *list.List {
 			log.Fatal("Can't parse the object material: ", objInfo.Name, err)
 			continue
 		}
+		material.SetTraceFunc(tracer.Tracing2)
 		obj, err := objectsInit[objInfo.Kind](material, objInfo.Args)
 		if err != nil {
 			log.Fatal("Can't initialize the object: ", objInfo.Name, err)

@@ -7,7 +7,6 @@ import (
 	obj "GoTracing/object"
 	"container/list"
 	"image/color"
-	"math"
 )
 
 type Whitted struct {
@@ -76,34 +75,6 @@ func (t Whitted) Tracing2(objList list.List, shadeRec *material.ShadeRec) color.
 
 		t.Tracing2(objList, &lightShadeRec)
 		color = shadeRec.Material.Shade(*shadeRec, !lightShadeRec.IsHit, BACKGROUND)
-
-		isSpecular, fr := shadeRec.Material.IsSpecular()
-		if shadeRec.Depth > 0 && isSpecular {
-			rayDirect := shadeRec.Ray.Direction.Normalize()
-			reflectIn := geo.Vector3D{
-				X: rayDirect.X - 2*rayDirect.Dot(shadeRec.Normal)*shadeRec.Normal.X,
-				Y: rayDirect.Y - 2*rayDirect.Dot(shadeRec.Normal)*shadeRec.Normal.Y,
-				Z: rayDirect.Z - 2*rayDirect.Dot(shadeRec.Normal)*shadeRec.Normal.Z,
-			}
-
-			lcoalRay := geo.Ray{
-				Endpoint:  shadeRec.HitPoint,
-				Direction: reflectIn,
-			}
-
-			localShadeRec := material.ShadeRec{
-				Light: shadeRec.Light,
-				Depth: shadeRec.Depth,
-				Ray:   lcoalRay,
-			}
-
-			reflectColor := t.Tracing2(objList, &localShadeRec)
-			reflectColor.R = uint8(float64(reflectColor.R) * math.Abs(shadeRec.Normal.Dot(shadeRec.VOut.Normalize())) * fr)
-			reflectColor.G = uint8(float64(reflectColor.G) * math.Abs(shadeRec.Normal.Dot(shadeRec.VOut.Normalize())) * fr)
-			reflectColor.B = uint8(float64(reflectColor.B) * math.Abs(shadeRec.Normal.Dot(shadeRec.VOut.Normalize())) * fr)
-
-			color = material.FixColor(color, reflectColor)
-		}
 	} else {
 		shadeRec.IsHit = false
 		color = BACKGROUND

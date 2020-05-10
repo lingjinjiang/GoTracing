@@ -1,14 +1,17 @@
 package material
 
 import (
+	"container/list"
 	"image/color"
 	"math"
 )
 
+type TraceFunc func(objList list.List, shadeRec *ShadeRec) color.RGBA
+
 type Material interface {
 	// return the color of material with lights
 	Shade(shadeRec ShadeRec, hitLight bool, diffuseColor color.RGBA) color.RGBA
-	IsSpecular() (bool, float64)
+	SetTraceFunc(TraceFunc)
 }
 
 func FixRGBA(value float64) float64 {

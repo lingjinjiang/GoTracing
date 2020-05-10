@@ -79,9 +79,8 @@ func NewSVMatte(args map[string]string) (Material, error) {
 		Size:   size,
 	}
 
-	return matte, nil
+	return &matte, nil
 }
 
-func (sv SV_Matte) IsSpecular() (bool, float64) {
-	return false, 0
+func (sv *SV_Matte) SetTraceFunc(tracing TraceFunc) {
 }

@@ -1,10 +1,12 @@
 package config
 
 import (
+	"GoTracing/tracer"
 	"testing"
 )
 
 func TestYamlConfig(t *testing.T) {
+
 	conf, _ := NewConfiguration("config.yaml")
 	if conf.Main.Output != "/home/example.jpg" {
 		t.Log(conf.Main.Output)
@@ -31,7 +33,7 @@ func TestYamlConfig(t *testing.T) {
 		t.Fail()
 	}
 
-	objList := GenerateObjects(conf)
+	objList := GenerateObjects(conf, tracer.SimpleTracer{})
 
 	if objList.Len() != 1 {
 		t.Log(objList.Len())

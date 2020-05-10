@@ -55,7 +55,7 @@ func NewPhong(args map[string]string) (Material, error) {
 		Color: *color,
 	}
 
-	return phong, nil
+	return &phong, nil
 }
 
 func (p Phong) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor color.RGBA) color.RGBA {
@@ -86,6 +86,5 @@ func (p Phong) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor color.RGBA) 
 	return color.RGBA{uint8(reflectR), uint8(reflectG), uint8(reflectB), uint8(reflectA)}
 }
 
-func (p Phong) IsSpecular() (bool, float64) {
-	return false, 0
+func (p *Phong) SetTraceFunc(TraceFunc) {
 }

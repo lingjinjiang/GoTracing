@@ -1,6 +1,7 @@
 package material
 
 import (
+	geo "GoTracing/geometry"
 	"GoTracing/material/brdf"
 	"GoTracing/util"
 	"log"
@@ -16,6 +17,7 @@ type SpecularPhong struct {
 	specular brdf.GlossySpecular
 	Color    color.RGBA
 	fr       float64
+	tracing  TraceFunc
 }
 
 // phong with simple mirror reflection
@@ -56,9 +58,10 @@ func NewSpecularPhong(args map[string]string) (Material, error) {
 			Exp: exp,
 		},
 		Color: *color,
+		fr:    0.2,
 	}
 
-	return phong, nil
+	return &phong, nil
 }
 
 func (sp SpecularPhong) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor color.RGBA) color.RGBA {
@@ -106,14 +109,44 @@ func (sp SpecularPhong) Shade(shadeRec ShadeRec, hitLight bool, diffuseColor col
 	finalB := float64(sp.Color.B) * reflectB / 255
 	finalA := float64(sp.Color.A) * reflectA / 255
 
-	return color.RGBA{
+	finalColor := color.RGBA{
 		R: uint8(finalR),
 		G: uint8(finalG),
 		B: uint8(finalB),
 		A: uint8(finalA),
 	}
+
+	if shadeRec.Depth > 0 {
+		rayDirect := shadeRec.Ray.Direction.Normalize()
+		reflectIn := geo.Vector3D{
+			X: rayDirect.X - 2*rayDirect.Dot(shadeRec.Normal)*shadeRec.Normal.X,
+			Y: rayDirect.Y - 2*rayDirect.Dot(shadeRec.Normal)*shadeRec.Normal.Y,
+			Z: rayDirect.Z - 2*rayDirect.Dot(shadeRec.Normal)*shadeRec.Normal.Z,
+		}
+
+		lcoalRay := geo.Ray{
+			Endpoint:  shadeRec.HitPoint,
+			Direction: reflectIn,
+		}
+
+		localShadeRec := ShadeRec{
+			Light:   shadeRec.Light,
+			Depth:   shadeRec.Depth,
+			Ray:     lcoalRay,
+			ObjList: shadeRec.ObjList,
+		}
+
+		reflectColor := sp.tracing(shadeRec.ObjList, &localShadeRec)
+		reflectColor.R = uint8(float64(reflectColor.R) * math.Abs(shadeRec.Normal.Dot(shadeRec.VOut.Normalize())) * sp.fr)
+		reflectColor.G = uint8(float64(reflectColor.G) * math.Abs(shadeRec.Normal.Dot(shadeRec.VOut.Normalize())) * sp.fr)
+		reflectColor.B = uint8(float64(reflectColor.B) * math.Abs(shadeRec.Normal.Dot(shadeRec.VOut.Normalize())) * sp.fr)
+
+		finalColor = FixColor(finalColor, reflectColor)
+	}
+
+	return finalColor
 }
 
-func (p SpecularPhong) IsSpecular() (bool, float64) {
-	return true, 0.2
+func (sp *SpecularPhong) SetTraceFunc(tracing TraceFunc) {
+	sp.tracing = tracing
 }

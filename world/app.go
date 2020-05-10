@@ -53,7 +53,7 @@ func Render(s *Scene, config config.Configuration) {
 }
 
 func Build(s *Scene, conf config.Configuration) {
-	objlist := config.GenerateObjects(conf)
+	objlist := config.GenerateObjects(conf, s.Tracer)
 	if objlist == nil {
 		return
 	}
@@ -81,9 +81,10 @@ func Tracing(x float64, y float64, vp ViewPlane, s *Scene, img *image.RGBA) {
 			ray := s.ViewPoint.GetRay(lcoalX, lcoalY)
 
 			shadeRec := material.ShadeRec{
-				Light: s.Light,
-				Ray:   *ray,
-				Depth: s.Tracer.GetMaxDepth(),
+				Light:   s.Light,
+				Ray:     *ray,
+				Depth:   s.Tracer.GetMaxDepth(),
+				ObjList: *s.ObjList,
 			}
 			localColor := s.Tracer.Tracing2(*s.ObjList, &shadeRec)
 

@@ -3,6 +3,7 @@ package material
 import (
 	geo "GoTracing/geometry"
 	"GoTracing/light"
+	"container/list"
 )
 
 type ShadeRec struct {
@@ -19,4 +20,5 @@ type ShadeRec struct {
 	ObjY        geo.Vector3D
 	ObjZ        geo.Vector3D
 	Depth       uint // times for tracing
+	ObjList     list.List
 }
