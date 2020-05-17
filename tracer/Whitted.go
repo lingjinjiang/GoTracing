@@ -2,7 +2,6 @@ package tracer
 
 import (
 	geo "GoTracing/geometry"
-	"GoTracing/light"
 	"GoTracing/material"
 	obj "GoTracing/object"
 	"container/list"
@@ -13,21 +12,13 @@ type Whitted struct {
 	maxDepth uint
 }
 
-func (t Whitted) Tracing(objList list.List, light light.Light, ray geo.Ray) material.ShadeRec {
-	return material.ShadeRec{}
-}
-
-func (t Whitted) GetColor(shadeRec material.ShadeRec, objList list.List, light light.Light) color.RGBA {
-	return color.RGBA{}
-}
-
 func NewWhitted() Tracer {
 	return Whitted{
 		maxDepth: 2,
 	}
 }
 
-func (t Whitted) Tracing2(objList list.List, shadeRec *material.ShadeRec) color.RGBA {
+func (t Whitted) Tracing(objList list.List, shadeRec *material.ShadeRec) color.RGBA {
 	var min float64 = -1.0
 	var isHit bool = false
 	var hitPoint geo.Point3D
@@ -73,7 +64,7 @@ func (t Whitted) Tracing2(objList list.List, shadeRec *material.ShadeRec) color.
 			Depth: 1,
 		}
 
-		t.Tracing2(objList, &lightShadeRec)
+		t.Tracing(objList, &lightShadeRec)
 		color = shadeRec.Material.Shade(*shadeRec, !lightShadeRec.IsHit, BACKGROUND)
 	} else {
 		shadeRec.IsHit = false

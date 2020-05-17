@@ -104,7 +104,7 @@ func GenerateObjects(conf Configuration, tracer tracer.Tracer) *list.List {
 			log.Fatal("Can't parse the object material: ", objInfo.Name, err)
 			continue
 		}
-		material.SetTraceFunc(tracer.Tracing2)
+		material.SetTraceFunc(tracer.Tracing)
 		obj, err := objectsInit[objInfo.Kind](material, objInfo.Args)
 		if err != nil {
 			log.Fatal("Can't initialize the object: ", objInfo.Name, err)

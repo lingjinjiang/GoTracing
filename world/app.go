@@ -86,10 +86,7 @@ func Tracing(x float64, y float64, vp ViewPlane, s *Scene, img *image.RGBA) {
 				Depth:   s.Tracer.GetMaxDepth(),
 				ObjList: *s.ObjList,
 			}
-			localColor := s.Tracer.Tracing2(*s.ObjList, &shadeRec)
-
-			// shadeRec := s.Tracer.Tracing(*s.ObjList, s.Light, *ray)
-			// localColor := s.Tracer.GetColor(shadeRec, *s.ObjList, s.Light)
+			localColor := s.Tracer.Tracing(*s.ObjList, &shadeRec)
 
 			r += int(localColor.R)
 			g += int(localColor.G)
