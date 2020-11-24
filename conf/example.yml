@@ -1,0 +1,41 @@
+---
+main:
+  width: 1280
+  height: 720
+  output: /home/example.jpg
+  renderThreads: 4
+tracer:
+  kind: SimpleTracer
+camra:
+  position: 0,500,1000
+  distance: 900
+  u: 1,0,0
+  v: 0,2,-1
+  w: 0,1,2
+  viewplane:
+    width: 1280
+    height: 720
+    sample: 16
+lights:
+- name: light1
+  kind: SimplePointLight
+  args:
+    position: 10000000,10000000,10000000
+    color: 255,255,255,255
+    ls: 1.0
+objects:
+- name: WhiteSphere
+  kind: Sphere
+  args:
+    center: 0,120,0
+    radius: 120
+    localX: 1,0,0
+    localY: 0,1,0
+    localZ: 0,0,1
+  material:
+    kind: SpecularPhong
+    args:
+      ks: 0.3
+      kd: 0.5
+      exp: 3
+      color: 255, 255, 255, 255
